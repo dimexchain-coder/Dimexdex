@@ -1251,6 +1251,115 @@ body:has(#customer-wallet) #customer-wallet {
   margin-top: 10px;
   text-align: center;
 }
+
+/* Wallet theme override */
+html[data-theme="dark"] body:has(#customer-wallet),
+html[data-theme="dark"] body:has(#customer-wallet) main.dashboard,
+html[data-theme="dark"] body:has(#customer-wallet) #customer-wallet,
+html[data-theme="dark"] #cw-dashboard {
+  background: #000 !important;
+  color: #f2f4f7 !important;
+}
+
+html[data-theme="dark"] #cw-dashboard {
+  --cw-bg: #000;
+  --cw-surface: #121316;
+  --cw-surface-2: #1a1b1f;
+  --cw-border: #292c33;
+  --cw-text: #f2f4f7;
+  --cw-muted: #9aa0aa;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-dashboard-head,
+html[data-theme="dark"] #cw-dashboard .cw-home-subtabs,
+html[data-theme="dark"] #cw-dashboard .cw-market-tabs,
+html[data-theme="dark"] #cw-dashboard .cw-market-col-head,
+html[data-theme="dark"] #cw-dashboard .cw-trade-mode-tabs,
+html[data-theme="dark"] #cw-dashboard .cw-orders-bottom-tabs,
+html[data-theme="dark"] #cw-dashboard .cw-assets-list,
+html[data-theme="dark"] #cw-dashboard .cw-market-asset-row {
+  border-color: #292c33 !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-wallet-switcher,
+html[data-theme="dark"] #cw-dashboard .cw-market-asset-name strong,
+html[data-theme="dark"] #cw-dashboard .cw-market-asset-price strong,
+html[data-theme="dark"] #cw-dashboard #cw-home-balance-value,
+html[data-theme="dark"] #cw-dashboard .cw-screen-center-title,
+html[data-theme="dark"] #cw-dashboard .cw-stat-box strong,
+html[data-theme="dark"] #cw-dashboard .cw-pair-stats strong,
+html[data-theme="dark"] #cw-dashboard .cw-detail-price,
+html[data-theme="dark"] #cw-dashboard .cw-detail-stats strong,
+html[data-theme="dark"] #cw-dashboard .cw-card-box h3 {
+  color: #f2f4f7 !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-balance-label,
+html[data-theme="dark"] #cw-dashboard .cw-btc-equiv,
+html[data-theme="dark"] #cw-dashboard .cw-today-pnl,
+html[data-theme="dark"] #cw-dashboard .cw-market-asset-name small,
+html[data-theme="dark"] #cw-dashboard .cw-market-asset-price small,
+html[data-theme="dark"] #cw-dashboard .cw-stat-box span,
+html[data-theme="dark"] #cw-dashboard .cw-market-col-head,
+html[data-theme="dark"] #cw-dashboard .cw-pair-stats span,
+html[data-theme="dark"] #cw-dashboard .cw-y-axis-labels,
+html[data-theme="dark"] #cw-dashboard .cw-x-axis-labels,
+html[data-theme="dark"] #cw-dashboard .cw-avail-line,
+html[data-theme="dark"] #cw-dashboard .cw-ob-head,
+html[data-theme="dark"] #cw-dashboard .cw-orders-bottom-tabs button {
+  color: #9aa0aa !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-icon-btn,
+html[data-theme="dark"] #cw-dashboard .cw-search-field,
+html[data-theme="dark"] #cw-dashboard .cw-filter-button,
+html[data-theme="dark"] #cw-dashboard .cw-menu-dots-btn,
+html[data-theme="dark"] #cw-dashboard .cw-stat-box,
+html[data-theme="dark"] #cw-dashboard .cw-market-pills button,
+html[data-theme="dark"] #cw-dashboard .cw-chip,
+html[data-theme="dark"] #cw-dashboard .cw-cat-card,
+html[data-theme="dark"] #cw-dashboard .cw-trade-chart-card,
+html[data-theme="dark"] #cw-dashboard .cw-limit-select,
+html[data-theme="dark"] #cw-dashboard .cw-num-box,
+html[data-theme="dark"] #cw-dashboard .cw-total-box,
+html[data-theme="dark"] #cw-dashboard .cw-btn-buy,
+html[data-theme="dark"] #cw-dashboard .cw-btn-sell,
+html[data-theme="dark"] #cw-dashboard .cw-card-box,
+html[data-theme="dark"] #cw-dashboard .cw-detail-stats > div,
+html[data-theme="dark"] #cw-dashboard .cw-page-back,
+html[data-theme="dark"] #cw-dashboard .cw-input-group input,
+html[data-theme="dark"] #cw-dashboard .cw-input-group select {
+  background: #14161a !important;
+  color: #e8ebef !important;
+  border-color: #292c33 !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-bottom-nav {
+  background: rgba(12, 13, 15, .97) !important;
+  border-color: #292c33 !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-market-asset-row:hover {
+  background: #1a1c20 !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-market-pills button.active,
+html[data-theme="dark"] #cw-dashboard .cw-market-tabs button.active,
+html[data-theme="dark"] #cw-dashboard .cw-trade-mode-tabs button.active {
+  color: #fff !important;
+}
+
+html[data-theme="dark"] #cw-dashboard .cw-subtab,
+html[data-theme="dark"] #cw-dashboard .cw-market-tabs button,
+html[data-theme="dark"] #cw-dashboard .cw-trade-mode-tabs button,
+html[data-theme="dark"] #cw-dashboard .cw-bottom-nav button {
+  background: transparent !important;
+}
+
+html[data-theme="dark"] #cw-dashboard input,
+html[data-theme="dark"] #cw-dashboard select {
+  color-scheme: dark;
+}
 </style>
 </head>
 <body>
@@ -1326,7 +1435,7 @@ body:has(#customer-wallet) #customer-wallet {
   <div id="cw-dashboard" class="cw-premium-dashboard cw-nav-home">
     <div class="cw-dashboard-head">
       <div class="cw-wallet-heading">
-        <button type="button" id="cw-settings-btn" class="cw-icon-btn" aria-label="Settings">⚙</button>
+        <button type="button" id="cw-settings-btn" class="cw-icon-btn" aria-label="Switch to dark theme">☾</button>
         <button type="button" id="cw-notif-btn" class="cw-icon-btn" aria-label="Notifications">🔔</button>
         <button type="button" id="cw-wallet-switcher" class="cw-wallet-switcher">
           <span id="cw-active-wallet-label">Wallet01-PFV</span> <span>⌄</span>
@@ -1585,6 +1694,30 @@ body:has(#customer-wallet) #customer-wallet {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+  // Light / Dark theme toggle
+  const themeButton = document.getElementById("cw-settings-btn");
+  const savedTheme = localStorage.getItem("dimex-wallet-theme") || "light";
+
+  document.documentElement.dataset.theme = savedTheme;
+  themeButton.setAttribute(
+    "aria-label",
+    savedTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+  );
+  themeButton.textContent = savedTheme === "dark" ? "☀" : "☾";
+
+  themeButton.addEventListener("click", () => {
+    const nextTheme =
+      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+
+    document.documentElement.dataset.theme = nextTheme;
+    localStorage.setItem("dimex-wallet-theme", nextTheme);
+    themeButton.setAttribute(
+      "aria-label",
+      nextTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+    );
+    themeButton.textContent = nextTheme === "dark" ? "☀" : "☾";
+  });
+
   // Sample Asset Data for Immediate Interactive Testing
   const assetsData = [
     { symbol: "DMXC", name: "DimeX Chain", type: "crypto", balance: "1,250.00", priceUsd: 0.042, inrValue: "₹350.00", change: "+4.85%", positive: true, cap: "$42.0M", vol: "$1.85M", network: "DimeX Mainnet (Chain ID: 1723)", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" },
@@ -1673,7 +1806,6 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `).join("");
 
-    // Bind click to open Coin Detail Page
     assetList.querySelectorAll(".cw-market-asset-row").forEach(row => {
       row.addEventListener("click", () => {
         const sym = row.getAttribute("data-symbol");
