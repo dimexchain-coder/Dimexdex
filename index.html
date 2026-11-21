@@ -1,31 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DimeX My Wallet</title>
 <style>
-/* Base Reset & Theme Variables */
 :root {
-  --bg: #ffffff;
-  --panel: #ffffff;
-  --panel2: #f7f9fc;
-  --line: #e5e9f0;
-  --text: #171b26;
-  --muted: #737d8c;
-  --green: #16a879;
-  --blue: #3867d6;
-  --gold: #c49a35;
-  --red: #dc4855;
-  --cw-bg: #000000;
-  --cw-surface: #121316;
-  --cw-surface-2: #1a1b1f;
-  --cw-border: #26282e;
-  --cw-text: #ffffff;
-  --cw-muted: #8e929b;
-  --cw-green: #00c076;
-  --cw-red: #f6465d;
-  --cw-purple: #6c47ff;
+  --bg-deep: #070A10;
+  --bg-card: rgba(17, 24, 39, 0.72);
+  --bg-card-2: rgba(31, 41, 55, 0.55);
+  --border-gold: rgba(245, 158, 11, 0.22);
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --text-main: #F3F4F6;
+  --text-muted: #9CA3AF;
+  --gold: #F59E0B;
+  --gold-light: #FBBF24;
+  --gold-dark: #D97706;
+  --cyan: #06B6D4;
+  --emerald: #10B981;
+  --red: #EF4444;
 }
 
 * {
@@ -39,13 +32,18 @@ html {
 }
 
 body {
-  background: #fff;
-  color: #171b26;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  margin: 0;
-  padding: 0;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+body::selection {
+  background: var(--gold);
+  color: #000000;
 }
 
 a {
@@ -56,44 +54,84 @@ a {
 button {
   cursor: pointer;
   border: 0;
-  border-radius: 9px;
+  border-radius: 10px;
   font-weight: 700;
-  transition: .2s;
+  transition: all 0.25s ease;
   font-family: inherit;
 }
 
 input, select {
   font-family: inherit;
   outline: none;
+  color-scheme: dark;
 }
 
-/* Hide global site header/footer on Wallet page */
-body:has(#customer-wallet) > header,
-body:has(#customer-wallet) > footer {
+/* Ambient Glow & Particle Canvas */
+#particleCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-bg {
+  position: fixed;
+  top: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.14) 0%, rgba(6, 182, 212, 0.06) 55%, transparent 75%);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 0;
+  animation: pulseGlow 6s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.45; transform: translateX(-50%) scale(0.96); }
+  50% { opacity: 0.9; transform: translateX(-50%) scale(1.05); }
+}
+
+.gold-gradient-text {
+  background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.pos { color: #34D399 !important; }
+.neg { color: #F87171 !important; }
+
+body > header,
+body > footer {
   display: none !important;
 }
 
-body:has(#customer-wallet) main.dashboard,
-body:has(#customer-wallet) #customer-wallet {
+main.dashboard,
+#customer-wallet {
+  position: relative;
+  z-index: 1;
   display: block !important;
   width: 100% !important;
-  max-width: none !important;
   min-height: 100dvh !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  background: #fff !important;
-  color: #173b31 !important;
+  background: transparent !important;
+  color: var(--text-main) !important;
 }
 
-/* Auth Section */
+/* Auth View */
 #cw-auth {
+  position: relative;
+  z-index: 2;
   max-width: 480px !important;
-  margin: 0 auto !important;
-  padding: 28px 18px !important;
-  color: #182235 !important;
+  margin: 24px auto !important;
+  padding: 24px 20px !important;
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-gold);
+  border-radius: 24px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  color: var(--text-main) !important;
 }
 
 #cw-auth[hidden],
@@ -104,34 +142,35 @@ body:has(#customer-wallet) #customer-wallet {
 
 #cw-auth h2 {
   font-size: 24px;
-  margin: 0 0 8px;
-  color: #173b2d;
+  font-weight: 900;
+  margin: 0 0 6px;
 }
 
 #cw-auth h3 {
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 500;
   margin: 0 0 16px;
-  color: #536c5e;
+  color: var(--text-muted);
 }
 
 .cw-auth-tabs {
   display: flex;
-  gap: 9px;
+  gap: 10px;
   margin: 16px 0;
 }
 
 .cw-auth-tabs button {
   flex: 1;
   padding: 11px 16px;
-  background: #f5f7fa;
-  color: #253247;
-  border: 1px solid #dce3ec;
+  background: rgba(17, 24, 39, 0.85);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
 }
 
 .cw-auth-tabs button.active {
-  background: #16a879;
-  color: #fff;
-  border-color: #16a879;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #000000;
+  border-color: transparent;
 }
 
 .cw-form {
@@ -141,24 +180,24 @@ body:has(#customer-wallet) #customer-wallet {
 }
 
 .cw-form label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: #34445a;
+  color: #D1D5DB;
   margin-top: 4px;
 }
 
 .cw-form input:not([type=checkbox]) {
   width: 100%;
   padding: 12px;
-  border: 1px solid #d9e0e9;
-  border-radius: 8px;
-  background: #fff;
-  color: #182235;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(11, 15, 23, 0.85);
+  color: #FFFFFF;
 }
 
 .cw-form input:not([type=checkbox]):focus {
-  border-color: #16a879;
-  box-shadow: 0 0 0 2px rgba(22, 168, 121, 0.15);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
 }
 
 .cw-mobile-row {
@@ -181,8 +220,10 @@ body:has(#customer-wallet) #customer-wallet {
   text-align: center;
   font-size: 18px;
   font-weight: 700;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 10px !important;
+  background: rgba(11, 15, 23, 0.9) !important;
+  color: var(--gold-light) !important;
 }
 
 .cw-remember {
@@ -190,28 +231,34 @@ body:has(#customer-wallet) #customer-wallet {
   align-items: center;
   gap: 8px;
   font-size: 13px;
+  color: #D1D5DB !important;
   margin: 6px 0;
 }
 
 .cw-remember input[type=checkbox] {
   width: 17px;
   height: 17px;
-  accent-color: #16a879;
+  accent-color: var(--gold);
 }
 
 .cw-primary {
   width: 100%;
   padding: 13px;
   margin-top: 6px;
-  background: #16a879 !important;
-  color: #fff !important;
+  background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+  color: #000000 !important;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+}
+
+.cw-primary:hover {
+  background: linear-gradient(135deg, #FBBF24, #F59E0B) !important;
 }
 
 .cw-link {
   background: transparent !important;
-  color: #16a879 !important;
+  color: var(--gold-light) !important;
   text-align: left;
   padding: 6px 0 !important;
   font-size: 13px;
@@ -219,7 +266,7 @@ body:has(#customer-wallet) #customer-wallet {
 
 #cw-auth-message {
   font-size: 13px;
-  color: #dc4855;
+  color: #F87171;
   margin-top: 12px;
   font-weight: 600;
 }
@@ -227,19 +274,21 @@ body:has(#customer-wallet) #customer-wallet {
 /* Main Dashboard Container */
 #cw-dashboard.cw-premium-dashboard {
   position: relative !important;
+  z-index: 2 !important;
   display: block !important;
   width: 100% !important;
   max-width: 480px !important;
   min-height: 100dvh !important;
   margin: 0 auto !important;
   padding: 14px 16px 96px !important;
-  background: #ffffff !important;
-  color: #173b31 !important;
+  background: rgba(17, 24, 39, 0.65) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-left: 1px solid var(--border-gold);
+  border-right: 1px solid var(--border-gold);
+  color: var(--text-main) !important;
   overflow-x: hidden !important;
 }
-
-.pos { color: #15965d !important; }
-.neg { color: #dc4855 !important; }
 
 /* Header Bar */
 .cw-dashboard-head {
@@ -248,8 +297,8 @@ body:has(#customer-wallet) #customer-wallet {
   justify-content: space-between !important;
   gap: 8px !important;
   margin-bottom: 12px !important;
-  padding-bottom: 10px !important;
-  border-bottom: 1px solid #e7efe9 !important;
+  padding-bottom: 12px !important;
+  border-bottom: 1px solid var(--border-gold) !important;
 }
 
 .cw-wallet-heading,
@@ -264,11 +313,16 @@ body:has(#customer-wallet) #customer-wallet {
   height: 32px !important;
   padding: 0 !important;
   border-radius: 50% !important;
-  background: #f3f7f5 !important;
-  color: #244b3e !important;
+  background: rgba(31, 41, 55, 0.75) !important;
+  border: 1px solid var(--border-subtle) !important;
+  color: var(--gold-light) !important;
   font-size: 15px !important;
   display: inline-grid !important;
   place-items: center !important;
+}
+
+.cw-icon-btn:hover {
+  border-color: var(--gold) !important;
 }
 
 .cw-wallet-switcher {
@@ -278,17 +332,17 @@ body:has(#customer-wallet) #customer-wallet {
   padding: 5px 8px !important;
   border-radius: 8px !important;
   background: transparent !important;
-  color: #183c2d !important;
+  color: #FFFFFF !important;
   font-size: 14px !important;
   font-weight: 800 !important;
 }
 
 .cw-view-assets-btn {
   padding: 6px 8px !important;
-  border: 1px solid #b9e8ce !important;
+  border: 1px solid rgba(6, 182, 212, 0.35) !important;
   border-radius: 8px !important;
-  background: #e9f8ef !important;
-  color: #087b4b !important;
+  background: rgba(6, 182, 212, 0.14) !important;
+  color: #22D3EE !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   white-space: nowrap;
@@ -296,10 +350,10 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-logout-btn {
   padding: 6px 8px !important;
-  border: 1px solid #e1eae4 !important;
+  border: 1px solid rgba(245, 158, 11, 0.28) !important;
   border-radius: 8px !important;
-  background: #f8fbf9 !important;
-  color: #536c5e !important;
+  background: rgba(31, 41, 55, 0.7) !important;
+  color: #FBBF24 !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   white-space: nowrap;
@@ -309,7 +363,7 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-home-subtabs {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
-  border-bottom: 1px solid #e6eee9 !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
   margin-bottom: 14px !important;
 }
 
@@ -318,14 +372,14 @@ body:has(#customer-wallet) #customer-wallet {
   border-radius: 0 !important;
   border-bottom: 2px solid transparent !important;
   background: transparent !important;
-  color: #7c8d84 !important;
+  color: var(--text-muted) !important;
   font-size: 14px !important;
   font-weight: 700 !important;
 }
 
 .cw-subtab.active {
-  color: #168451 !important;
-  border-bottom-color: #168451 !important;
+  color: var(--gold-light) !important;
+  border-bottom-color: var(--gold) !important;
 }
 
 /* Balance Block */
@@ -334,7 +388,11 @@ body:has(#customer-wallet) #customer-wallet {
   flex-direction: column !important;
   align-items: center !important;
   gap: 3px !important;
-  margin: 8px 0 16px !important;
+  margin: 10px 0 16px !important;
+  padding: 16px 12px !important;
+  border-radius: 20px !important;
+  background: rgba(31, 41, 55, 0.45) !important;
+  border: 1px solid var(--border-gold) !important;
   text-align: center !important;
 }
 
@@ -346,13 +404,15 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-balance-label {
   font-size: 12px;
-  color: #71877a;
+  color: var(--text-muted);
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .cw-eye-btn {
   background: transparent !important;
-  color: #71877a !important;
+  color: var(--gold-light) !important;
   font-size: 14px !important;
   padding: 2px !important;
 }
@@ -360,19 +420,20 @@ body:has(#customer-wallet) #customer-wallet {
 #cw-home-balance-value {
   font-size: 36px !important;
   line-height: 1.15 !important;
-  font-weight: 800 !important;
-  color: #183c2d !important;
+  font-weight: 900 !important;
+  color: #FFFFFF !important;
   letter-spacing: -0.5px !important;
 }
 
 .cw-btc-equiv {
   font-size: 12px;
-  color: #71877a;
+  color: var(--cyan);
+  font-weight: 600;
 }
 
 .cw-today-pnl {
   font-size: 12px;
-  color: #71877a;
+  color: var(--text-muted);
   margin-top: 2px;
 }
 
@@ -392,21 +453,26 @@ body:has(#customer-wallet) #customer-wallet {
   min-height: 48px !important;
   padding: 8px 6px !important;
   border-radius: 14px !important;
-  color: #ffffff !important;
   font-size: 13px !important;
   font-weight: 800 !important;
 }
 
 .cw-action-send {
-  background: linear-gradient(115deg, #31b5f5, #1268e9) !important;
+  background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+  color: #000000 !important;
+  box-shadow: 0 6px 18px rgba(245, 158, 11, 0.22);
 }
 
 .cw-action-receive {
-  background: linear-gradient(115deg, #36df86, #08a95e) !important;
+  background: linear-gradient(135deg, #06B6D4, #0891B2) !important;
+  color: #000000 !important;
+  box-shadow: 0 6px 18px rgba(6, 182, 212, 0.22);
 }
 
 .cw-action-swap {
-  background: linear-gradient(115deg, #bf4cf2, #7612df) !important;
+  background: rgba(31, 41, 55, 0.85) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  color: #FBBF24 !important;
 }
 
 .cw-action-icon {
@@ -415,9 +481,13 @@ body:has(#customer-wallet) #customer-wallet {
   width: 24px !important;
   height: 24px !important;
   border-radius: 7px !important;
-  background: rgba(255, 255, 255, 0.22) !important;
-  color: #ffffff !important;
+  background: rgba(0, 0, 0, 0.18) !important;
   font-size: 15px !important;
+}
+
+.cw-action-swap .cw-action-icon {
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: #FBBF24 !important;
 }
 
 /* Home Search & Filter */
@@ -435,27 +505,31 @@ body:has(#customer-wallet) #customer-wallet {
   flex: 1 !important;
   height: 40px !important;
   padding: 0 12px !important;
-  border: 1px solid #dce6e0 !important;
-  border-radius: 10px !important;
-  background: #f7faf8 !important;
-  color: #71877a !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  background: rgba(17, 24, 39, 0.85) !important;
+  color: var(--text-muted) !important;
+}
+
+.cw-search-field:focus-within {
+  border-color: var(--gold) !important;
 }
 
 .cw-search-field input {
   width: 100% !important;
   border: 0 !important;
   background: transparent !important;
-  color: #183c2d !important;
+  color: #FFFFFF !important;
   font-size: 13px !important;
 }
 
 .cw-filter-button {
   height: 40px !important;
   padding: 0 12px !important;
-  border: 1px solid #dce6e0 !important;
-  border-radius: 10px !important;
-  background: #f7faf8 !important;
-  color: #244b3e !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
+  background: rgba(31, 41, 55, 0.75) !important;
+  color: #FBBF24 !important;
   font-size: 12px !important;
   font-weight: 700 !important;
 }
@@ -464,7 +538,7 @@ body:has(#customer-wallet) #customer-wallet {
   width: 30px !important;
   height: 40px !important;
   background: transparent !important;
-  color: #536c5e !important;
+  color: var(--text-muted) !important;
   font-size: 18px !important;
 }
 
@@ -472,7 +546,7 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-assets-list {
   display: flex !important;
   flex-direction: column !important;
-  border-top: 1px solid #e8eeeb;
+  gap: 8px;
 }
 
 .cw-market-asset-row {
@@ -480,13 +554,18 @@ body:has(#customer-wallet) #customer-wallet {
   align-items: center !important;
   gap: 11px !important;
   min-height: 68px !important;
-  padding: 10px 4px !important;
-  border-bottom: 1px solid #e8eeeb !important;
+  padding: 10px 12px !important;
+  border-radius: 16px !important;
+  background: var(--bg-card-2) !important;
+  border: 1px solid var(--border-subtle) !important;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .cw-market-asset-row:hover {
-  background: #f6fbf8 !important;
+  background: rgba(31, 41, 55, 0.85) !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
+  transform: translateY(-1px);
 }
 
 .cw-market-asset-logo {
@@ -496,9 +575,10 @@ body:has(#customer-wallet) #customer-wallet {
   height: 38px !important;
   flex: 0 0 38px !important;
   border-radius: 50% !important;
-  background: #eaf7ef !important;
-  color: #168451 !important;
-  font-size: 12px !important;
+  background: rgba(245, 158, 11, 0.14) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+  color: var(--gold-light) !important;
+  font-size: 11px !important;
   font-weight: 800 !important;
 }
 
@@ -513,12 +593,12 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-market-asset-name strong {
   font-size: 14px !important;
   font-weight: 800 !important;
-  color: #244b3e !important;
+  color: #FFFFFF !important;
 }
 
 .cw-market-asset-name small {
   font-size: 11px !important;
-  color: #7e8f86 !important;
+  color: var(--text-muted) !important;
 }
 
 .cw-market-asset-price {
@@ -532,7 +612,7 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-market-asset-price strong {
   font-size: 14px !important;
   font-weight: 800 !important;
-  color: #244b3e !important;
+  color: #FFFFFF !important;
 }
 
 .cw-market-asset-price small {
@@ -544,7 +624,7 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-market-tabs {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
-  border-bottom: 1px solid #e6eee9 !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
   margin-bottom: 12px !important;
 }
 
@@ -553,13 +633,13 @@ body:has(#customer-wallet) #customer-wallet {
   border-radius: 0 !important;
   border-bottom: 2px solid transparent !important;
   background: transparent !important;
-  color: #7c8d84 !important;
+  color: var(--text-muted) !important;
   font-size: 13px !important;
 }
 
 .cw-market-tabs button.active {
-  color: #6c47ff !important;
-  border-bottom-color: #6c47ff !important;
+  color: var(--gold-light) !important;
+  border-bottom-color: var(--gold) !important;
 }
 
 .cw-market-stats-grid {
@@ -570,9 +650,9 @@ body:has(#customer-wallet) #customer-wallet {
 }
 
 .cw-stat-box {
-  background: #f7faf8 !important;
-  border: 1px solid #e2ece6 !important;
-  border-radius: 10px !important;
+  background: var(--bg-card-2) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: 12px !important;
   padding: 8px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -581,12 +661,12 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-stat-box span {
   font-size: 10px !important;
-  color: #71877a !important;
+  color: var(--text-muted) !important;
 }
 
 .cw-stat-box strong {
   font-size: 13px !important;
-  color: #183c2d !important;
+  color: #FFFFFF !important;
 }
 
 .cw-stat-box small {
@@ -604,16 +684,16 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-market-pills button {
   padding: 6px 14px !important;
   border-radius: 999px !important;
-  border: 1px solid #dce6e0 !important;
-  background: #f7faf8 !important;
-  color: #365747 !important;
+  border: 1px solid var(--border-subtle) !important;
+  background: rgba(31, 41, 55, 0.7) !important;
+  color: #D1D5DB !important;
   font-size: 12px !important;
 }
 
 .cw-market-pills button.active {
-  background: #168451 !important;
-  color: #ffffff !important;
-  border-color: #168451 !important;
+  background: linear-gradient(135deg, #F59E0B, #D97706) !important;
+  color: #000000 !important;
+  border-color: transparent !important;
 }
 
 .cw-market-col-head {
@@ -621,8 +701,9 @@ body:has(#customer-wallet) #customer-wallet {
   grid-template-columns: 1.4fr 1fr 0.8fr !important;
   padding: 6px 8px !important;
   font-size: 11px !important;
-  color: #71877a !important;
-  border-bottom: 1px solid #e6eee9 !important;
+  color: var(--text-muted) !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
+  margin-bottom: 6px !important;
 }
 
 .cw-market-col-head span:nth-child(2),
@@ -636,7 +717,7 @@ body:has(#customer-wallet) #customer-wallet {
   font-size: 18px !important;
   font-weight: 800 !important;
   margin: 0 0 14px !important;
-  color: #183c2d !important;
+  color: #FFFFFF !important;
 }
 
 .cw-explore-search-bar {
@@ -647,7 +728,7 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-google-g {
   font-weight: 800;
-  color: #4285f4;
+  color: var(--gold-light);
   font-size: 15px;
 }
 
@@ -656,7 +737,7 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-trending-header h4 {
   font-size: 14px !important;
   font-weight: 800 !important;
-  color: #183c2d !important;
+  color: #FFFFFF !important;
   margin: 0 0 10px !important;
 }
 
@@ -672,10 +753,14 @@ body:has(#customer-wallet) #customer-wallet {
   flex: 0 0 auto !important;
   padding: 6px 12px !important;
   border-radius: 999px !important;
-  border: 1px solid #dce6e0 !important;
-  background: #f7faf8 !important;
-  color: #244b3e !important;
+  border: 1px solid var(--border-subtle) !important;
+  background: var(--bg-card-2) !important;
+  color: #F3F4F6 !important;
   font-size: 11px !important;
+}
+
+.cw-chip:hover {
+  border-color: var(--gold) !important;
 }
 
 .cw-cat-grid {
@@ -693,13 +778,17 @@ body:has(#customer-wallet) #customer-wallet {
   gap: 5px !important;
   padding: 12px 6px !important;
   border-radius: 12px !important;
-  border: 1px solid #e2ece6 !important;
-  background: #f7faf8 !important;
-  color: #244b3e !important;
+  border: 1px solid var(--border-subtle) !important;
+  background: var(--bg-card-2) !important;
+  color: #F3F4F6 !important;
+}
+
+.cw-cat-card:hover {
+  border-color: var(--gold) !important;
 }
 
 .cw-cat-card span { font-size: 18px; }
-.cw-cat-card small { font-size: 11px; }
+.cw-cat-card small { font-size: 11px; color: var(--text-muted); }
 
 .cw-trending-header {
   display: flex !important;
@@ -710,7 +799,7 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-link-inline {
   background: transparent !important;
-  color: #168451 !important;
+  color: var(--cyan) !important;
   font-size: 12px !important;
 }
 
@@ -718,7 +807,7 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-trade-mode-tabs {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
-  border-bottom: 1px solid #e6eee9 !important;
+  border-bottom: 1px solid var(--border-subtle) !important;
   margin-bottom: 12px !important;
 }
 
@@ -727,13 +816,13 @@ body:has(#customer-wallet) #customer-wallet {
   border-radius: 0 !important;
   border-bottom: 2px solid transparent !important;
   background: transparent !important;
-  color: #7c8d84 !important;
+  color: var(--text-muted) !important;
   font-size: 13px !important;
 }
 
 .cw-trade-mode-tabs button.active {
-  color: #168451 !important;
-  border-bottom-color: #168451 !important;
+  color: var(--gold-light) !important;
+  border-bottom-color: var(--gold) !important;
 }
 
 .cw-trade-pair-bar {
@@ -754,11 +843,11 @@ body:has(#customer-wallet) #customer-wallet {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #f7931a;
-  color: #fff;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #000000;
   display: grid;
   place-items: center;
-  font-weight: 800;
+  font-weight: 900;
 }
 
 .cw-pair-price-line {
@@ -771,11 +860,12 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-pair-price-line span:first-child {
   font-size: 18px;
   font-weight: 800;
+  color: #FFFFFF;
 }
 
 .cw-pair-price-line small {
   font-size: 11px;
-  color: #71877a;
+  color: var(--text-muted);
 }
 
 .cw-pair-stats {
@@ -791,8 +881,8 @@ body:has(#customer-wallet) #customer-wallet {
   gap: 6px;
 }
 
-.cw-pair-stats span { color: #71877a; }
-.cw-pair-stats strong { color: #183c2d; }
+.cw-pair-stats span { color: var(--text-muted); }
+.cw-pair-stats strong { color: #FFFFFF; }
 
 .cw-tf-row {
   display: flex;
@@ -805,21 +895,21 @@ body:has(#customer-wallet) #customer-wallet {
   padding: 4px 8px !important;
   border-radius: 6px !important;
   background: transparent !important;
-  color: #71877a !important;
+  color: var(--text-muted) !important;
   font-size: 11px !important;
 }
 
 .cw-tf-row button.active {
-  background: #e9f8ef !important;
-  color: #168451 !important;
+  background: rgba(245, 158, 11, 0.16) !important;
+  color: var(--gold-light) !important;
 }
 
 .cw-trade-chart-card {
   position: relative;
-  border: 1px solid #e2ece6;
-  border-radius: 10px;
-  background: #f9fcfa;
-  padding: 6px 48px 6px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: rgba(11, 15, 23, 0.85);
+  padding: 6px 52px 6px 6px;
   margin-bottom: 12px;
 }
 
@@ -838,13 +928,13 @@ body:has(#customer-wallet) #customer-wallet {
   flex-direction: column;
   justify-content: space-between;
   font-size: 9px;
-  color: #71877a;
+  color: var(--text-muted);
 }
 
 .cw-y-badge {
-  background: #00c076;
-  color: #fff;
-  font-weight: 700;
+  background: #10B981;
+  color: #000000;
+  font-weight: 800;
   padding: 1px 4px;
   border-radius: 4px;
 }
@@ -853,7 +943,7 @@ body:has(#customer-wallet) #customer-wallet {
   display: flex;
   justify-content: space-between;
   font-size: 9px;
-  color: #71877a;
+  color: var(--text-muted);
   padding-top: 2px;
 }
 
@@ -875,35 +965,36 @@ body:has(#customer-wallet) #customer-wallet {
   padding: 7px !important;
   border-radius: 8px !important;
   font-size: 12px !important;
-  background: #f0f5f2 !important;
-  color: #71877a !important;
+  background: rgba(31, 41, 55, 0.8) !important;
+  color: var(--text-muted) !important;
 }
 
 .cw-btn-buy.active {
-  background: #00c076 !important;
-  color: #fff !important;
+  background: #10B981 !important;
+  color: #000000 !important;
 }
 
 .cw-btn-sell.active {
-  background: #f6465d !important;
-  color: #fff !important;
+  background: #EF4444 !important;
+  color: #FFFFFF !important;
 }
 
 .cw-limit-select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f7faf8;
-  border: 1px solid #dce6e0;
+  background: rgba(11, 15, 23, 0.85);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;
+  color: #E5E7EB;
   margin-bottom: 8px;
 }
 
 .cw-num-box {
-  background: #f7faf8;
-  border: 1px solid #dce6e0;
+  background: rgba(11, 15, 23, 0.85);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 5px 8px;
   margin-bottom: 8px;
@@ -911,7 +1002,7 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-num-box small {
   font-size: 10px;
-  color: #71877a;
+  color: var(--text-muted);
   display: block;
 }
 
@@ -924,7 +1015,7 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-num-controls button {
   background: transparent !important;
-  color: #244b3e !important;
+  color: var(--gold-light) !important;
   font-size: 16px !important;
   padding: 0 4px !important;
 }
@@ -933,23 +1024,15 @@ body:has(#customer-wallet) #customer-wallet {
   width: 100%;
   border: 0 !important;
   background: transparent !important;
-  color: #183c2d !important;
+  color: #FFFFFF !important;
   text-align: center;
   font-size: 12px;
   font-weight: 700;
 }
 
-.cw-pct-bar { margin: 8px 0; }
-.cw-pct-labels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: #71877a;
-}
-
 .cw-total-box {
-  background: #f7faf8;
-  border: 1px solid #dce6e0;
+  background: rgba(11, 15, 23, 0.85);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 6px 8px;
   margin-bottom: 8px;
@@ -959,7 +1042,7 @@ body:has(#customer-wallet) #customer-wallet {
   width: 100%;
   border: 0 !important;
   background: transparent !important;
-  color: #183c2d !important;
+  color: var(--gold-light) !important;
   font-size: 12px;
 }
 
@@ -967,24 +1050,35 @@ body:has(#customer-wallet) #customer-wallet {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #71877a;
+  color: var(--text-muted);
   margin-bottom: 8px;
+}
+
+.cw-avail-line strong {
+  color: #FFFFFF;
 }
 
 .cw-buy-cta {
   width: 100%;
   padding: 10px !important;
   border-radius: 10px !important;
-  background: #00c076 !important;
-  color: #fff !important;
+  background: #10B981 !important;
+  color: #000000 !important;
   font-weight: 800 !important;
   font-size: 13px !important;
+}
+
+.cw-orderbook-col {
+  background: rgba(11, 15, 23, 0.65);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 8px;
 }
 
 .cw-ob-head {
   display: flex;
   justify-content: space-between;
-  color: #71877a;
+  color: var(--text-muted);
   font-size: 10px;
   margin-bottom: 4px;
 }
@@ -994,10 +1088,11 @@ body:has(#customer-wallet) #customer-wallet {
   justify-content: space-between;
   padding: 2px 4px;
   font-size: 11px;
+  color: #E5E7EB;
 }
 
-.cw-ob-row.ask span:first-child { color: #f6465d; }
-.cw-ob-row.bid span:first-child { color: #00c076; }
+.cw-ob-row.ask span:first-child { color: #F87171; }
+.cw-ob-row.bid span:first-child { color: #34D399; }
 
 .cw-ob-mid {
   padding: 6px 4px;
@@ -1012,19 +1107,19 @@ body:has(#customer-wallet) #customer-wallet {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  border-top: 1px solid #e6eee9;
+  border-top: 1px solid var(--border-subtle);
   padding-top: 8px;
 }
 
 .cw-orders-bottom-tabs button {
   background: transparent !important;
-  color: #71877a !important;
+  color: var(--text-muted) !important;
   font-size: 11px !important;
   white-space: nowrap;
 }
 
 .cw-orders-bottom-tabs button.active {
-  color: #168451 !important;
+  color: var(--gold-light) !important;
 }
 
 /* Bottom Navigation Bar */
@@ -1039,9 +1134,10 @@ body:has(#customer-wallet) #customer-wallet {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
   padding: 6px 6px calc(6px + env(safe-area-inset-bottom)) !important;
-  border-top: 1px solid #e2ece6 !important;
-  background: rgba(255, 255, 255, 0.96) !important;
-  backdrop-filter: blur(12px) !important;
+  border-top: 1px solid var(--border-gold) !important;
+  background: rgba(11, 15, 23, 0.94) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
 }
 
 .cw-bottom-nav button {
@@ -1052,7 +1148,7 @@ body:has(#customer-wallet) #customer-wallet {
   gap: 2px !important;
   min-height: 48px !important;
   background: transparent !important;
-  color: #7c8d84 !important;
+  color: var(--text-muted) !important;
 }
 
 .cw-bottom-nav button > span {
@@ -1066,7 +1162,7 @@ body:has(#customer-wallet) #customer-wallet {
 }
 
 .cw-bottom-nav button.active {
-  color: #168451 !important;
+  color: var(--gold-light) !important;
 }
 
 /* Screen Visibility Rules */
@@ -1133,10 +1229,10 @@ body:has(#customer-wallet) #customer-wallet {
   gap: 6px;
   padding: 8px 12px;
   margin-bottom: 14px;
-  border: 1px solid #dce9e0;
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
-  background: #f7fbf8;
-  color: #183c2d;
+  background: var(--bg-card-2);
+  color: var(--gold-light);
   font-size: 13px;
 }
 
@@ -1151,18 +1247,19 @@ body:has(#customer-wallet) #customer-wallet {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #eaf7ef;
-  color: #168451;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid var(--border-gold);
+  color: var(--gold-light);
   display: grid;
   place-items: center;
   font-weight: 800;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .cw-detail-price {
   font-size: 30px;
-  font-weight: 800;
-  color: #183c2d;
+  font-weight: 900;
+  color: #FFFFFF;
 }
 
 .cw-detail-stats {
@@ -1174,34 +1271,34 @@ body:has(#customer-wallet) #customer-wallet {
 
 .cw-detail-stats > div {
   padding: 12px;
-  border: 1px solid #e2ece6;
+  border: 1px solid var(--border-subtle);
   border-radius: 12px;
-  background: #f9fcfa;
+  background: var(--bg-card-2);
 }
 
 .cw-detail-stats span {
   display: block;
   font-size: 11px;
-  color: #71877a;
+  color: var(--text-muted);
 }
 
 .cw-detail-stats strong {
   font-size: 14px;
-  color: #183c2d;
+  color: #FFFFFF;
 }
 
 .cw-card-box {
-  border: 1px solid #e2ece6;
-  border-radius: 14px;
+  border: 1px solid var(--border-gold);
+  border-radius: 16px;
   padding: 16px;
-  background: #fff;
+  background: var(--bg-card-2);
   margin-top: 8px;
 }
 
 .cw-card-box h3 {
   font-size: 20px;
   margin-bottom: 12px;
-  color: #183c2d;
+  color: #FFFFFF;
 }
 
 .cw-input-group {
@@ -1212,7 +1309,7 @@ body:has(#customer-wallet) #customer-wallet {
   display: block;
   font-size: 12px;
   font-weight: 700;
-  color: #365747;
+  color: #D1D5DB;
   margin-bottom: 6px;
 }
 
@@ -1220,11 +1317,16 @@ body:has(#customer-wallet) #customer-wallet {
 .cw-input-group select {
   width: 100%;
   padding: 12px;
-  border: 1px solid #dce6e0;
+  border: 1px solid var(--border-subtle);
   border-radius: 10px;
-  background: #f8fbf9;
-  color: #183c2d;
+  background: rgba(11, 15, 23, 0.9);
+  color: #FFFFFF;
   font-size: 13px;
+}
+
+.cw-input-group input:focus,
+.cw-input-group select:focus {
+  border-color: var(--gold);
 }
 
 .cw-receive-row {
@@ -1233,141 +1335,36 @@ body:has(#customer-wallet) #customer-wallet {
   justify-content: space-between;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 1px solid #edf2ee;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .cw-copy-btn {
   padding: 7px 12px;
-  background: #eaf8ef;
-  color: #168451;
+  background: rgba(245, 158, 11, 0.16);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: var(--gold-light);
   border-radius: 8px;
   font-size: 12px;
 }
 
 #cw-dashboard-message {
   font-size: 12px;
-  color: #168451;
+  color: var(--gold-light);
   font-weight: 700;
-  margin-top: 10px;
+  margin-top: 12px;
   text-align: center;
-}
-
-/* Wallet theme override */
-html[data-theme="dark"] body:has(#customer-wallet),
-html[data-theme="dark"] body:has(#customer-wallet) main.dashboard,
-html[data-theme="dark"] body:has(#customer-wallet) #customer-wallet,
-html[data-theme="dark"] #cw-dashboard {
-  background: #000 !important;
-  color: #f2f4f7 !important;
-}
-
-html[data-theme="dark"] #cw-dashboard {
-  --cw-bg: #000;
-  --cw-surface: #121316;
-  --cw-surface-2: #1a1b1f;
-  --cw-border: #292c33;
-  --cw-text: #f2f4f7;
-  --cw-muted: #9aa0aa;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-dashboard-head,
-html[data-theme="dark"] #cw-dashboard .cw-home-subtabs,
-html[data-theme="dark"] #cw-dashboard .cw-market-tabs,
-html[data-theme="dark"] #cw-dashboard .cw-market-col-head,
-html[data-theme="dark"] #cw-dashboard .cw-trade-mode-tabs,
-html[data-theme="dark"] #cw-dashboard .cw-orders-bottom-tabs,
-html[data-theme="dark"] #cw-dashboard .cw-assets-list,
-html[data-theme="dark"] #cw-dashboard .cw-market-asset-row {
-  border-color: #292c33 !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-wallet-switcher,
-html[data-theme="dark"] #cw-dashboard .cw-market-asset-name strong,
-html[data-theme="dark"] #cw-dashboard .cw-market-asset-price strong,
-html[data-theme="dark"] #cw-dashboard #cw-home-balance-value,
-html[data-theme="dark"] #cw-dashboard .cw-screen-center-title,
-html[data-theme="dark"] #cw-dashboard .cw-stat-box strong,
-html[data-theme="dark"] #cw-dashboard .cw-pair-stats strong,
-html[data-theme="dark"] #cw-dashboard .cw-detail-price,
-html[data-theme="dark"] #cw-dashboard .cw-detail-stats strong,
-html[data-theme="dark"] #cw-dashboard .cw-card-box h3 {
-  color: #f2f4f7 !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-balance-label,
-html[data-theme="dark"] #cw-dashboard .cw-btc-equiv,
-html[data-theme="dark"] #cw-dashboard .cw-today-pnl,
-html[data-theme="dark"] #cw-dashboard .cw-market-asset-name small,
-html[data-theme="dark"] #cw-dashboard .cw-market-asset-price small,
-html[data-theme="dark"] #cw-dashboard .cw-stat-box span,
-html[data-theme="dark"] #cw-dashboard .cw-market-col-head,
-html[data-theme="dark"] #cw-dashboard .cw-pair-stats span,
-html[data-theme="dark"] #cw-dashboard .cw-y-axis-labels,
-html[data-theme="dark"] #cw-dashboard .cw-x-axis-labels,
-html[data-theme="dark"] #cw-dashboard .cw-avail-line,
-html[data-theme="dark"] #cw-dashboard .cw-ob-head,
-html[data-theme="dark"] #cw-dashboard .cw-orders-bottom-tabs button {
-  color: #9aa0aa !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-icon-btn,
-html[data-theme="dark"] #cw-dashboard .cw-search-field,
-html[data-theme="dark"] #cw-dashboard .cw-filter-button,
-html[data-theme="dark"] #cw-dashboard .cw-menu-dots-btn,
-html[data-theme="dark"] #cw-dashboard .cw-stat-box,
-html[data-theme="dark"] #cw-dashboard .cw-market-pills button,
-html[data-theme="dark"] #cw-dashboard .cw-chip,
-html[data-theme="dark"] #cw-dashboard .cw-cat-card,
-html[data-theme="dark"] #cw-dashboard .cw-trade-chart-card,
-html[data-theme="dark"] #cw-dashboard .cw-limit-select,
-html[data-theme="dark"] #cw-dashboard .cw-num-box,
-html[data-theme="dark"] #cw-dashboard .cw-total-box,
-html[data-theme="dark"] #cw-dashboard .cw-btn-buy,
-html[data-theme="dark"] #cw-dashboard .cw-btn-sell,
-html[data-theme="dark"] #cw-dashboard .cw-card-box,
-html[data-theme="dark"] #cw-dashboard .cw-detail-stats > div,
-html[data-theme="dark"] #cw-dashboard .cw-page-back,
-html[data-theme="dark"] #cw-dashboard .cw-input-group input,
-html[data-theme="dark"] #cw-dashboard .cw-input-group select {
-  background: #14161a !important;
-  color: #e8ebef !important;
-  border-color: #292c33 !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-bottom-nav {
-  background: rgba(12, 13, 15, .97) !important;
-  border-color: #292c33 !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-market-asset-row:hover {
-  background: #1a1c20 !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-market-pills button.active,
-html[data-theme="dark"] #cw-dashboard .cw-market-tabs button.active,
-html[data-theme="dark"] #cw-dashboard .cw-trade-mode-tabs button.active {
-  color: #fff !important;
-}
-
-html[data-theme="dark"] #cw-dashboard .cw-subtab,
-html[data-theme="dark"] #cw-dashboard .cw-market-tabs button,
-html[data-theme="dark"] #cw-dashboard .cw-trade-mode-tabs button,
-html[data-theme="dark"] #cw-dashboard .cw-bottom-nav button {
-  background: transparent !important;
-}
-
-html[data-theme="dark"] #cw-dashboard input,
-html[data-theme="dark"] #cw-dashboard select {
-  color-scheme: dark;
 }
 </style>
 </head>
 <body>
+<canvas id="particleCanvas"></canvas>
+<div class="glow-bg"></div>
+
 <main class="dashboard">
 <section id="customer-wallet" class="panel customer-wallet">
   <!-- Auth View -->
   <div id="cw-auth" hidden>
-    <h2>Wallet01-PFV</h2>
+    <h2 class="gold-gradient-text">Wallet01-PFV</h2>
     <h3>Create Your Wallet / Sign In</h3>
     <div class="cw-auth-tabs">
       <button type="button" class="active" data-cw-mode="login">Login</button>
@@ -1431,14 +1428,14 @@ html[data-theme="dark"] #cw-dashboard select {
     <p id="cw-auth-message" role="status"></p>
   </div>
 
-  <!-- Main Wallet Dashboard View (Open by default so you can click & test immediately) -->
+  <!-- Main Wallet Dashboard View -->
   <div id="cw-dashboard" class="cw-premium-dashboard cw-nav-home">
     <div class="cw-dashboard-head">
       <div class="cw-wallet-heading">
-        <button type="button" id="cw-settings-btn" class="cw-icon-btn" aria-label="Switch to dark theme">☾</button>
+        <button type="button" id="cw-settings-btn" class="cw-icon-btn" aria-label="Theme">✦</button>
         <button type="button" id="cw-notif-btn" class="cw-icon-btn" aria-label="Notifications">🔔</button>
         <button type="button" id="cw-wallet-switcher" class="cw-wallet-switcher">
-          <span id="cw-active-wallet-label">Wallet01-PFV</span> <span>⌄</span>
+          <span id="cw-active-wallet-label" class="gold-gradient-text">Wallet01-PFV</span> <span>⌄</span>
         </button>
       </div>
       <div class="cw-head-right">
@@ -1593,14 +1590,14 @@ html[data-theme="dark"] #cw-dashboard select {
       <div class="cw-trade-chart-card">
         <svg viewBox="0 0 600 180" class="cw-spot-sparkline">
           <defs>
-            <linearGradient id="spotGreenGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#00c076" stop-opacity="0.35"/>
-              <stop offset="100%" stop-color="#00c076" stop-opacity="0.0"/>
+            <linearGradient id="spotGoldCyanGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#06B6D4" stop-opacity="0.0"/>
             </linearGradient>
           </defs>
-          <path d="M10,145 L45,120 L70,132 L105,96 L135,108 L175,85 L210,104 L250,74 L290,90 L335,62 L370,76 L415,48 L455,66 L500,32 L530,52 L555,44 L570,58" fill="none" stroke="#00c076" stroke-width="2.5"/>
-          <path d="M10,145 L45,120 L70,132 L105,96 L135,108 L175,85 L210,104 L250,74 L290,90 L335,62 L370,76 L415,48 L455,66 L500,32 L530,52 L555,44 L570,58 L570,170 L10,170 Z" fill="url(#spotGreenGrad)"/>
-          <circle cx="570" cy="58" r="5" fill="#00c076" stroke="#fff" stroke-width="1.5"/>
+          <path d="M10,145 L45,120 L70,132 L105,96 L135,108 L175,85 L210,104 L250,74 L290,90 L335,62 L370,76 L415,48 L455,66 L500,32 L530,52 L555,44 L570,58" fill="none" stroke="#F59E0B" stroke-width="2.5"/>
+          <path d="M10,145 L45,120 L70,132 L105,96 L135,108 L175,85 L210,104 L250,74 L290,90 L335,62 L370,76 L415,48 L455,66 L500,32 L530,52 L555,44 L570,58 L570,170 L10,170 Z" fill="url(#spotGoldCyanGrad)"/>
+          <circle cx="570" cy="58" r="5" fill="#FBBF24" stroke="#000" stroke-width="1.5"/>
         </svg>
         <div class="cw-y-axis-labels">
           <span>72,000.00</span>
@@ -1676,7 +1673,7 @@ html[data-theme="dark"] #cw-dashboard select {
     <!-- Coin Detail View -->
     <div id="cw-coin-detail" hidden></div>
 
-    <!-- Action Panel (Send / Receive / Swap / Notifications / Settings) -->
+    <!-- Action Panel (Send / Receive / Swap) -->
     <div id="cw-action-panel" hidden></div>
 
     <p id="cw-dashboard-message" role="status"></p>
@@ -1694,31 +1691,42 @@ html[data-theme="dark"] #cw-dashboard select {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // Light / Dark theme toggle
-  const themeButton = document.getElementById("cw-settings-btn");
-  const savedTheme = localStorage.getItem("dimex-wallet-theme") || "light";
+  // Particle Canvas (Gold theme from first code)
+  const canvas = document.getElementById("particleCanvas");
+  if (canvas) {
+    const ctx = canvas.getContext("2d");
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener("resize", resize);
+    const particles = Array.from({ length: 40 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      radius: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: (Math.random() - 0.5) * 0.4,
+      alpha: Math.random() * 0.5 + 0.2
+    }));
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 158, 11, ${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+  }
 
-  document.documentElement.dataset.theme = savedTheme;
-  themeButton.setAttribute(
-    "aria-label",
-    savedTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-  );
-  themeButton.textContent = savedTheme === "dark" ? "☀" : "☾";
-
-  themeButton.addEventListener("click", () => {
-    const nextTheme =
-      document.documentElement.dataset.theme === "dark" ? "light" : "dark";
-
-    document.documentElement.dataset.theme = nextTheme;
-    localStorage.setItem("dimex-wallet-theme", nextTheme);
-    themeButton.setAttribute(
-      "aria-label",
-      nextTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-    );
-    themeButton.textContent = nextTheme === "dark" ? "☀" : "☾";
-  });
-
-  // Sample Asset Data for Immediate Interactive Testing
+  // Sample Asset Data
   const assetsData = [
     { symbol: "DMXC", name: "DimeX Chain", type: "crypto", balance: "1,250.00", priceUsd: 0.042, inrValue: "₹350.00", change: "+4.85%", positive: true, cap: "$42.0M", vol: "$1.85M", network: "DimeX Mainnet (Chain ID: 1723)", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" },
     { symbol: "DMX", name: "DimeX Coin (BEP-20)", type: "crypto", balance: "840.50", priceUsd: 0.011, inrValue: "₹77.21", change: "+2.14%", positive: true, cap: "$11.0M", vol: "$420.5K", network: "BNB Smart Chain (BEP-20)", address: "0x0eb5dc6af3dbd9f6d10f50c363b61c8714f497e6" },
@@ -1747,23 +1755,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 3000);
   }
 
-  // Render Asset List
   function renderAssets(filterText = "", category = "all") {
     if (currentNav === "home" && currentHomeTab === "earn") {
       assetList.innerHTML = `
         <div class="cw-card-box">
           <h3>DimeX Staking & Earn</h3>
-          <p style="color:#71877a;font-size:12px;margin-bottom:12px;">Earn daily DMX rewards with flexible & locked plans.</p>
+          <p style="color:#9CA3AF;font-size:12px;margin-bottom:12px;">Earn daily DMX rewards with flexible & locked plans.</p>
           <div class="cw-receive-row">
-            <div><strong>90 Days Plan</strong><br><small style="color:#168451;">12% APY · DMX Staking</small></div>
+            <div><strong>90 Days Plan</strong><br><small class="pos">12% APY · DMX Staking</small></div>
             <button type="button" class="cw-copy-btn" onclick="alert('90-Day Staking Selected!')">Stake Now</button>
           </div>
           <div class="cw-receive-row">
-            <div><strong>180 Days Plan</strong><br><small style="color:#168451;">18% APY · DMX Staking</small></div>
+            <div><strong>180 Days Plan</strong><br><small class="pos">18% APY · DMX Staking</small></div>
             <button type="button" class="cw-copy-btn" onclick="alert('180-Day Staking Selected!')">Stake Now</button>
           </div>
           <div class="cw-receive-row" style="border:0;">
-            <div><strong>365 Days Plan</strong><br><small style="color:#168451;">24% APY · DMX Staking</small></div>
+            <div><strong>365 Days Plan</strong><br><small class="pos">24% APY · DMX Staking</small></div>
             <button type="button" class="cw-copy-btn" onclick="alert('365-Day Staking Selected!')">Stake Now</button>
           </div>
         </div>`;
@@ -1775,7 +1782,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="cw-card-box" style="text-align:center;padding:28px 16px;">
           <div style="font-size:32px;margin-bottom:8px;">🖼</div>
           <strong>No NFTs Found</strong>
-          <p style="color:#71877a;font-size:12px;margin-top:4px;">Your DimeX Chain (DMXC) collectibles will appear here.</p>
+          <p style="color:#9CA3AF;font-size:12px;margin-top:4px;">Your DimeX Chain (DMXC) collectibles will appear here.</p>
         </div>`;
       return;
     }
@@ -1788,7 +1795,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     if (!filtered.length) {
-      assetList.innerHTML = `<div style="padding:24px;text-align:center;color:#71877a;">No matching assets found.</div>`;
+      assetList.innerHTML = `<div style="padding:24px;text-align:center;color:#9CA3AF;">No matching assets found.</div>`;
       return;
     }
 
@@ -1815,7 +1822,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Open Full-Screen Coin Detail
   function openCoinDetail(coin) {
     dashboard.classList.add("cw-overlay-mode");
     actionPanel.hidden = true;
@@ -1825,8 +1831,8 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="cw-detail-heading">
         <div class="cw-detail-logo-fallback">${coin.symbol}</div>
         <div>
-          <strong style="font-size:18px;display:block;">${coin.name} (${coin.symbol})</strong>
-          <small style="color:#71877a;">${coin.network}</small>
+          <strong style="font-size:18px;display:block;color:#fff;">${coin.name} (${coin.symbol})</strong>
+          <small style="color:#9CA3AF;">${coin.network}</small>
         </div>
       </div>
       <div class="cw-detail-price">$${coin.priceUsd.toLocaleString()}</div>
@@ -1852,7 +1858,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("dt-swap").onclick = () => openActionView("swap", coin.symbol);
   }
 
-  // Open Full-Screen Send / Receive / Swap
   function openActionView(mode, defaultSymbol = "DMXC") {
     dashboard.classList.add("cw-overlay-mode");
     detailBox.hidden = true;
@@ -1892,12 +1897,12 @@ document.addEventListener("DOMContentLoaded", () => {
         <button type="button" class="cw-page-back" id="cw-close-action">← Back</button>
         <div class="cw-card-box">
           <h3>Receive Crypto</h3>
-          <p style="font-size:12px;color:#71877a;margin-bottom:10px;">Tap Copy to copy your wallet deposit address:</p>
+          <p style="font-size:12px;color:#9CA3AF;margin-bottom:10px;">Tap Copy to copy your wallet deposit address:</p>
           ${assetsData.slice(0, 5).map(a => `
             <div class="cw-receive-row">
               <div style="min-width:0;flex:1;">
                 <strong>${a.name} (${a.symbol})</strong>
-                <div style="font-size:11px;color:#71877a;overflow:hidden;text-overflow:ellipsis;">${a.address}</div>
+                <div style="font-size:11px;color:#9CA3AF;overflow:hidden;text-overflow:ellipsis;">${a.address}</div>
               </div>
               <button type="button" class="cw-copy-btn" data-addr="${a.address}">Copy</button>
             </div>
@@ -1954,7 +1959,6 @@ document.addEventListener("DOMContentLoaded", () => {
     actionPanel.hidden = true;
   }
 
-  // Bottom Nav Switching
   document.querySelectorAll(".cw-bottom-nav button").forEach(btn => {
     btn.addEventListener("click", () => {
       closeOverlay();
@@ -1967,7 +1971,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Home Sub-tabs (Coin / Earn / NFT)
   document.querySelectorAll(".cw-subtab").forEach(tab => {
     tab.addEventListener("click", () => {
       document.querySelectorAll(".cw-subtab").forEach(t => t.classList.remove("active"));
@@ -1977,7 +1980,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Market Sub-tabs & Pills
   document.querySelectorAll("[data-cw-mkt-tab]").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll("[data-cw-mkt-tab]").forEach(b => b.classList.remove("active"));
@@ -1994,24 +1996,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Send / Receive / Swap buttons on Home
   document.querySelectorAll("[data-cw-action]").forEach(btn => {
     btn.addEventListener("click", () => openActionView(btn.getAttribute("data-cw-action")));
   });
 
-  // View Assets button -> switches to Market tab
   document.getElementById("cw-view-assets").addEventListener("click", () => {
     document.querySelector('.cw-bottom-nav button[data-cw-nav="market"]').click();
   });
 
-  // Eye Toggle Balance
   document.getElementById("cw-toggle-balance-eye").addEventListener("click", () => {
     balanceHidden = !balanceHidden;
     document.getElementById("cw-home-balance-value").textContent = balanceHidden ? "₹••••••" : "₹447.21";
     renderAssets();
   });
 
-  // Search Inputs (Home & Explore)
   document.getElementById("cw-home-search").addEventListener("input", e => renderAssets(e.target.value));
   document.getElementById("cw-explore-search").addEventListener("input", e => renderAssets(e.target.value));
   document.querySelectorAll("[data-cw-quick-search]").forEach(chip => {
@@ -2022,7 +2020,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Trade Buy/Sell & Total Calculation
   const sideBuy = document.getElementById("cw-side-buy");
   const sideSell = document.getElementById("cw-side-sell");
   const submitOrder = document.getElementById("cw-submit-order");
@@ -2042,14 +2039,14 @@ document.addEventListener("DOMContentLoaded", () => {
     sideBuy.classList.add("active");
     sideSell.classList.remove("active");
     submitOrder.textContent = "Buy BTC";
-    submitOrder.style.background = "#00c076";
+    submitOrder.style.background = "#10B981";
   });
 
   sideSell.addEventListener("click", () => {
     sideSell.classList.add("active");
     sideBuy.classList.remove("active");
     submitOrder.textContent = "Sell BTC";
-    submitOrder.style.background = "#f6465d";
+    submitOrder.style.background = "#EF4444";
   });
 
   submitOrder.addEventListener("click", () => {
@@ -2059,7 +2056,6 @@ document.addEventListener("DOMContentLoaded", () => {
     tradeTotal.value = "";
   });
 
-  // Logout & Login Auth Flow
   document.getElementById("cw-logout").addEventListener("click", () => {
     dashboard.hidden = true;
     authBox.hidden = false;
@@ -2102,7 +2098,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderAssets();
   });
 
-  // Initial Render
   renderAssets();
 });
 </script>
