@@ -1,0 +1,1978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DimeX My Wallet</title>
+<style>
+/* Base Reset & Theme Variables */
+:root {
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel2: #f7f9fc;
+  --line: #e5e9f0;
+  --text: #171b26;
+  --muted: #737d8c;
+  --green: #16a879;
+  --blue: #3867d6;
+  --gold: #c49a35;
+  --red: #dc4855;
+  --cw-bg: #000000;
+  --cw-surface: #121316;
+  --cw-surface-2: #1a1b1f;
+  --cw-border: #26282e;
+  --cw-text: #ffffff;
+  --cw-muted: #8e929b;
+  --cw-green: #00c076;
+  --cw-red: #f6465d;
+  --cw-purple: #6c47ff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #fff;
+  color: #171b26;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 9px;
+  font-weight: 700;
+  transition: .2s;
+  font-family: inherit;
+}
+
+input, select {
+  font-family: inherit;
+  outline: none;
+}
+
+/* Hide global site header/footer on Wallet page */
+body:has(#customer-wallet) > header,
+body:has(#customer-wallet) > footer {
+  display: none !important;
+}
+
+body:has(#customer-wallet) main.dashboard,
+body:has(#customer-wallet) #customer-wallet {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 100dvh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: #fff !important;
+  color: #173b31 !important;
+}
+
+/* Auth Section */
+#cw-auth {
+  max-width: 480px !important;
+  margin: 0 auto !important;
+  padding: 28px 18px !important;
+  color: #182235 !important;
+}
+
+#cw-auth[hidden],
+#cw-dashboard[hidden],
+.cw-form[hidden] {
+  display: none !important;
+}
+
+#cw-auth h2 {
+  font-size: 24px;
+  margin: 0 0 8px;
+  color: #173b2d;
+}
+
+#cw-auth h3 {
+  font-size: 16px;
+  margin: 0 0 16px;
+  color: #536c5e;
+}
+
+.cw-auth-tabs {
+  display: flex;
+  gap: 9px;
+  margin: 16px 0;
+}
+
+.cw-auth-tabs button {
+  flex: 1;
+  padding: 11px 16px;
+  background: #f5f7fa;
+  color: #253247;
+  border: 1px solid #dce3ec;
+}
+
+.cw-auth-tabs button.active {
+  background: #16a879;
+  color: #fff;
+  border-color: #16a879;
+}
+
+.cw-form {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.cw-form label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #34445a;
+  margin-top: 4px;
+}
+
+.cw-form input:not([type=checkbox]) {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d9e0e9;
+  border-radius: 8px;
+  background: #fff;
+  color: #182235;
+}
+
+.cw-form input:not([type=checkbox]):focus {
+  border-color: #16a879;
+  box-shadow: 0 0 0 2px rgba(22, 168, 121, 0.15);
+}
+
+.cw-mobile-row {
+  display: grid;
+  grid-template-columns: 95px 1fr;
+  gap: 8px;
+}
+
+.cw-pin-boxes {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
+  margin: 4px 0 10px;
+}
+
+.cw-pin-boxes input {
+  width: 100% !important;
+  height: 44px;
+  padding: 0 !important;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 8px !important;
+}
+
+.cw-remember {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+.cw-remember input[type=checkbox] {
+  width: 17px;
+  height: 17px;
+  accent-color: #16a879;
+}
+
+.cw-primary {
+  width: 100%;
+  padding: 13px;
+  margin-top: 6px;
+  background: #16a879 !important;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.cw-link {
+  background: transparent !important;
+  color: #16a879 !important;
+  text-align: left;
+  padding: 6px 0 !important;
+  font-size: 13px;
+}
+
+#cw-auth-message {
+  font-size: 13px;
+  color: #dc4855;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+/* Main Dashboard Container */
+#cw-dashboard.cw-premium-dashboard {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  min-height: 100dvh !important;
+  margin: 0 auto !important;
+  padding: 14px 16px 96px !important;
+  background: #ffffff !important;
+  color: #173b31 !important;
+  overflow-x: hidden !important;
+}
+
+.pos { color: #15965d !important; }
+.neg { color: #dc4855 !important; }
+
+/* Header Bar */
+.cw-dashboard-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  padding-bottom: 10px !important;
+  border-bottom: 1px solid #e7efe9 !important;
+}
+
+.cw-wallet-heading,
+.cw-head-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.cw-icon-btn {
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: #f3f7f5 !important;
+  color: #244b3e !important;
+  font-size: 15px !important;
+  display: inline-grid !important;
+  place-items: center !important;
+}
+
+.cw-wallet-switcher {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 5px 8px !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #183c2d !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+}
+
+.cw-view-assets-btn {
+  padding: 6px 8px !important;
+  border: 1px solid #b9e8ce !important;
+  border-radius: 8px !important;
+  background: #e9f8ef !important;
+  color: #087b4b !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+}
+
+.cw-logout-btn {
+  padding: 6px 8px !important;
+  border: 1px solid #e1eae4 !important;
+  border-radius: 8px !important;
+  background: #f8fbf9 !important;
+  color: #536c5e !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  white-space: nowrap;
+}
+
+/* Home Subtabs */
+.cw-home-subtabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  border-bottom: 1px solid #e6eee9 !important;
+  margin-bottom: 14px !important;
+}
+
+.cw-subtab {
+  padding: 9px 6px !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  background: transparent !important;
+  color: #7c8d84 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.cw-subtab.active {
+  color: #168451 !important;
+  border-bottom-color: #168451 !important;
+}
+
+/* Balance Block */
+.cw-home-balance {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+  margin: 8px 0 16px !important;
+  text-align: center !important;
+}
+
+.cw-balance-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cw-balance-label {
+  font-size: 12px;
+  color: #71877a;
+  font-weight: 600;
+}
+
+.cw-eye-btn {
+  background: transparent !important;
+  color: #71877a !important;
+  font-size: 14px !important;
+  padding: 2px !important;
+}
+
+#cw-home-balance-value {
+  font-size: 36px !important;
+  line-height: 1.15 !important;
+  font-weight: 800 !important;
+  color: #183c2d !important;
+  letter-spacing: -0.5px !important;
+}
+
+.cw-btc-equiv {
+  font-size: 12px;
+  color: #71877a;
+}
+
+.cw-today-pnl {
+  font-size: 12px;
+  color: #71877a;
+  margin-top: 2px;
+}
+
+/* Action Buttons: Send | Receive | Swap */
+.cw-actions {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 10px !important;
+  margin: 14px 0 18px !important;
+}
+
+.cw-actions button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  min-height: 48px !important;
+  padding: 8px 6px !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+}
+
+.cw-action-send {
+  background: linear-gradient(115deg, #31b5f5, #1268e9) !important;
+}
+
+.cw-action-receive {
+  background: linear-gradient(115deg, #36df86, #08a95e) !important;
+}
+
+.cw-action-swap {
+  background: linear-gradient(115deg, #bf4cf2, #7612df) !important;
+}
+
+.cw-action-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 7px !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  color: #ffffff !important;
+  font-size: 15px !important;
+}
+
+/* Home Search & Filter */
+.cw-home-search {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  margin: 0 0 14px !important;
+}
+
+.cw-search-field {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex: 1 !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border: 1px solid #dce6e0 !important;
+  border-radius: 10px !important;
+  background: #f7faf8 !important;
+  color: #71877a !important;
+}
+
+.cw-search-field input {
+  width: 100% !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #183c2d !important;
+  font-size: 13px !important;
+}
+
+.cw-filter-button {
+  height: 40px !important;
+  padding: 0 12px !important;
+  border: 1px solid #dce6e0 !important;
+  border-radius: 10px !important;
+  background: #f7faf8 !important;
+  color: #244b3e !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+}
+
+.cw-menu-dots-btn {
+  width: 30px !important;
+  height: 40px !important;
+  background: transparent !important;
+  color: #536c5e !important;
+  font-size: 18px !important;
+}
+
+/* Asset Rows */
+.cw-assets-list {
+  display: flex !important;
+  flex-direction: column !important;
+  border-top: 1px solid #e8eeeb;
+}
+
+.cw-market-asset-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 11px !important;
+  min-height: 68px !important;
+  padding: 10px 4px !important;
+  border-bottom: 1px solid #e8eeeb !important;
+  cursor: pointer;
+}
+
+.cw-market-asset-row:hover {
+  background: #f6fbf8 !important;
+}
+
+.cw-market-asset-logo {
+  display: grid !important;
+  place-items: center !important;
+  width: 38px !important;
+  height: 38px !important;
+  flex: 0 0 38px !important;
+  border-radius: 50% !important;
+  background: #eaf7ef !important;
+  color: #168451 !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+}
+
+.cw-market-asset-name {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.cw-market-asset-name strong {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #244b3e !important;
+}
+
+.cw-market-asset-name small {
+  font-size: 11px !important;
+  color: #7e8f86 !important;
+}
+
+.cw-market-asset-price {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 2px !important;
+  text-align: right;
+}
+
+.cw-market-asset-price strong {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #244b3e !important;
+}
+
+.cw-market-asset-price small {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+
+/* Market Screen */
+.cw-market-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  border-bottom: 1px solid #e6eee9 !important;
+  margin-bottom: 12px !important;
+}
+
+.cw-market-tabs button {
+  padding: 10px 4px !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  background: transparent !important;
+  color: #7c8d84 !important;
+  font-size: 13px !important;
+}
+
+.cw-market-tabs button.active {
+  color: #6c47ff !important;
+  border-bottom-color: #6c47ff !important;
+}
+
+.cw-market-stats-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+}
+
+.cw-stat-box {
+  background: #f7faf8 !important;
+  border: 1px solid #e2ece6 !important;
+  border-radius: 10px !important;
+  padding: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+}
+
+.cw-stat-box span {
+  font-size: 10px !important;
+  color: #71877a !important;
+}
+
+.cw-stat-box strong {
+  font-size: 13px !important;
+  color: #183c2d !important;
+}
+
+.cw-stat-box small {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+.cw-market-pills {
+  display: flex !important;
+  gap: 8px !important;
+  margin-bottom: 12px !important;
+  flex-wrap: wrap !important;
+}
+
+.cw-market-pills button {
+  padding: 6px 14px !important;
+  border-radius: 999px !important;
+  border: 1px solid #dce6e0 !important;
+  background: #f7faf8 !important;
+  color: #365747 !important;
+  font-size: 12px !important;
+}
+
+.cw-market-pills button.active {
+  background: #168451 !important;
+  color: #ffffff !important;
+  border-color: #168451 !important;
+}
+
+.cw-market-col-head {
+  display: grid !important;
+  grid-template-columns: 1.4fr 1fr 0.8fr !important;
+  padding: 6px 8px !important;
+  font-size: 11px !important;
+  color: #71877a !important;
+  border-bottom: 1px solid #e6eee9 !important;
+}
+
+.cw-market-col-head span:nth-child(2),
+.cw-market-col-head span:nth-child(3) {
+  text-align: right !important;
+}
+
+/* Explore Screen */
+.cw-screen-center-title {
+  text-align: center !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  margin: 0 0 14px !important;
+  color: #183c2d !important;
+}
+
+.cw-explore-search-bar {
+  height: 44px !important;
+  border-radius: 999px !important;
+  margin-bottom: 16px !important;
+}
+
+.cw-google-g {
+  font-weight: 800;
+  color: #4285f4;
+  font-size: 15px;
+}
+
+.cw-popular-searches h4,
+.cw-explore-categories h4,
+.cw-trending-header h4 {
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  color: #183c2d !important;
+  margin: 0 0 10px !important;
+}
+
+.cw-chip-row {
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  padding-bottom: 6px !important;
+  margin-bottom: 14px !important;
+}
+
+.cw-chip {
+  flex: 0 0 auto !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid #dce6e0 !important;
+  background: #f7faf8 !important;
+  color: #244b3e !important;
+  font-size: 11px !important;
+}
+
+.cw-cat-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 8px !important;
+  margin-bottom: 18px !important;
+}
+
+.cw-cat-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 12px 6px !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2ece6 !important;
+  background: #f7faf8 !important;
+  color: #244b3e !important;
+}
+
+.cw-cat-card span { font-size: 18px; }
+.cw-cat-card small { font-size: 11px; }
+
+.cw-trending-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 8px !important;
+}
+
+.cw-link-inline {
+  background: transparent !important;
+  color: #168451 !important;
+  font-size: 12px !important;
+}
+
+/* Trade Screen */
+.cw-trade-mode-tabs {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  border-bottom: 1px solid #e6eee9 !important;
+  margin-bottom: 12px !important;
+}
+
+.cw-trade-mode-tabs button {
+  padding: 8px 4px !important;
+  border-radius: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  background: transparent !important;
+  color: #7c8d84 !important;
+  font-size: 13px !important;
+}
+
+.cw-trade-mode-tabs button.active {
+  color: #168451 !important;
+  border-bottom-color: #168451 !important;
+}
+
+.cw-trade-pair-bar {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+  gap: 8px !important;
+  margin-bottom: 10px !important;
+}
+
+.cw-pair-left {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cw-btc-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #f7931a;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+}
+
+.cw-pair-price-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cw-pair-price-line span:first-child {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.cw-pair-price-line small {
+  font-size: 11px;
+  color: #71877a;
+}
+
+.cw-pair-stats {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 2px 10px;
+  font-size: 10px;
+}
+
+.cw-pair-stats > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cw-pair-stats span { color: #71877a; }
+.cw-pair-stats strong { color: #183c2d; }
+
+.cw-tf-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+}
+
+.cw-tf-row button {
+  padding: 4px 8px !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: #71877a !important;
+  font-size: 11px !important;
+}
+
+.cw-tf-row button.active {
+  background: #e9f8ef !important;
+  color: #168451 !important;
+}
+
+.cw-trade-chart-card {
+  position: relative;
+  border: 1px solid #e2ece6;
+  border-radius: 10px;
+  background: #f9fcfa;
+  padding: 6px 48px 6px 6px;
+  margin-bottom: 12px;
+}
+
+.cw-spot-sparkline {
+  width: 100%;
+  height: 130px;
+  display: block;
+}
+
+.cw-y-axis-labels {
+  position: absolute;
+  top: 6px;
+  right: 4px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #71877a;
+}
+
+.cw-y-badge {
+  background: #00c076;
+  color: #fff;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 4px;
+}
+
+.cw-x-axis-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #71877a;
+  padding-top: 2px;
+}
+
+.cw-order-ticket-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cw-buy-sell-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.cw-btn-buy, .cw-btn-sell {
+  padding: 7px !important;
+  border-radius: 8px !important;
+  font-size: 12px !important;
+  background: #f0f5f2 !important;
+  color: #71877a !important;
+}
+
+.cw-btn-buy.active {
+  background: #00c076 !important;
+  color: #fff !important;
+}
+
+.cw-btn-sell.active {
+  background: #f6465d !important;
+  color: #fff !important;
+}
+
+.cw-limit-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7faf8;
+  border: 1px solid #dce6e0;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.cw-num-box {
+  background: #f7faf8;
+  border: 1px solid #dce6e0;
+  border-radius: 8px;
+  padding: 5px 8px;
+  margin-bottom: 8px;
+}
+
+.cw-num-box small {
+  font-size: 10px;
+  color: #71877a;
+  display: block;
+}
+
+.cw-num-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cw-num-controls button {
+  background: transparent !important;
+  color: #244b3e !important;
+  font-size: 16px !important;
+  padding: 0 4px !important;
+}
+
+.cw-num-controls input {
+  width: 100%;
+  border: 0 !important;
+  background: transparent !important;
+  color: #183c2d !important;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.cw-pct-bar { margin: 8px 0; }
+.cw-pct-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #71877a;
+}
+
+.cw-total-box {
+  background: #f7faf8;
+  border: 1px solid #dce6e0;
+  border-radius: 8px;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+}
+
+.cw-total-box input {
+  width: 100%;
+  border: 0 !important;
+  background: transparent !important;
+  color: #183c2d !important;
+  font-size: 12px;
+}
+
+.cw-avail-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #71877a;
+  margin-bottom: 8px;
+}
+
+.cw-buy-cta {
+  width: 100%;
+  padding: 10px !important;
+  border-radius: 10px !important;
+  background: #00c076 !important;
+  color: #fff !important;
+  font-weight: 800 !important;
+  font-size: 13px !important;
+}
+
+.cw-ob-head {
+  display: flex;
+  justify-content: space-between;
+  color: #71877a;
+  font-size: 10px;
+  margin-bottom: 4px;
+}
+
+.cw-ob-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 4px;
+  font-size: 11px;
+}
+
+.cw-ob-row.ask span:first-child { color: #f6465d; }
+.cw-ob-row.bid span:first-child { color: #00c076; }
+
+.cw-ob-mid {
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.cw-ob-mid strong { font-size: 14px; }
+.cw-ob-mid small { font-size: 10px; }
+
+.cw-orders-bottom-tabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  border-top: 1px solid #e6eee9;
+  padding-top: 8px;
+}
+
+.cw-orders-bottom-tabs button {
+  background: transparent !important;
+  color: #71877a !important;
+  font-size: 11px !important;
+  white-space: nowrap;
+}
+
+.cw-orders-bottom-tabs button.active {
+  color: #168451 !important;
+}
+
+/* Bottom Navigation Bar */
+.cw-bottom-nav {
+  position: fixed !important;
+  z-index: 9999 !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom)) !important;
+  border-top: 1px solid #e2ece6 !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.cw-bottom-nav button {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  min-height: 48px !important;
+  background: transparent !important;
+  color: #7c8d84 !important;
+}
+
+.cw-bottom-nav button > span {
+  font-size: 19px !important;
+  line-height: 1 !important;
+}
+
+.cw-bottom-nav button small {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+.cw-bottom-nav button.active {
+  color: #168451 !important;
+}
+
+/* Screen Visibility Rules */
+#cw-dashboard.cw-nav-home .cw-market-screen,
+#cw-dashboard.cw-nav-home .cw-explore-tools,
+#cw-dashboard.cw-nav-home .cw-trade-tools {
+  display: none !important;
+}
+
+#cw-dashboard.cw-nav-market .cw-home-subtabs,
+#cw-dashboard.cw-nav-market .cw-home-balance,
+#cw-dashboard.cw-nav-market .cw-actions,
+#cw-dashboard.cw-nav-market .cw-home-search,
+#cw-dashboard.cw-nav-market .cw-explore-tools,
+#cw-dashboard.cw-nav-market .cw-trade-tools {
+  display: none !important;
+}
+
+#cw-dashboard.cw-nav-market .cw-market-screen {
+  display: block !important;
+}
+
+#cw-dashboard.cw-nav-explore .cw-home-subtabs,
+#cw-dashboard.cw-nav-explore .cw-home-balance,
+#cw-dashboard.cw-nav-explore .cw-actions,
+#cw-dashboard.cw-nav-explore .cw-home-search,
+#cw-dashboard.cw-nav-explore .cw-market-screen,
+#cw-dashboard.cw-nav-explore .cw-trade-tools {
+  display: none !important;
+}
+
+#cw-dashboard.cw-nav-explore .cw-explore-tools {
+  display: block !important;
+}
+
+#cw-dashboard.cw-nav-trade .cw-home-subtabs,
+#cw-dashboard.cw-nav-trade .cw-home-balance,
+#cw-dashboard.cw-nav-trade .cw-actions,
+#cw-dashboard.cw-nav-trade .cw-home-search,
+#cw-dashboard.cw-nav-trade .cw-market-screen,
+#cw-dashboard.cw-nav-trade .cw-explore-tools,
+#cw-dashboard.cw-nav-trade #cw-asset-list {
+  display: none !important;
+}
+
+#cw-dashboard.cw-nav-trade .cw-trade-tools {
+  display: block !important;
+}
+
+/* Full-screen Overlays (Coin Detail, Send, Receive, Swap) */
+#cw-dashboard.cw-overlay-mode > :not(#cw-coin-detail):not(#cw-action-panel) {
+  display: none !important;
+}
+
+#cw-coin-detail,
+#cw-action-panel {
+  width: 100%;
+  padding: 8px 0 28px;
+}
+
+.cw-page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+  border: 1px solid #dce9e0;
+  border-radius: 10px;
+  background: #f7fbf8;
+  color: #183c2d;
+  font-size: 13px;
+}
+
+.cw-detail-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cw-detail-logo-fallback {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #eaf7ef;
+  color: #168451;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.cw-detail-price {
+  font-size: 30px;
+  font-weight: 800;
+  color: #183c2d;
+}
+
+.cw-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.cw-detail-stats > div {
+  padding: 12px;
+  border: 1px solid #e2ece6;
+  border-radius: 12px;
+  background: #f9fcfa;
+}
+
+.cw-detail-stats span {
+  display: block;
+  font-size: 11px;
+  color: #71877a;
+}
+
+.cw-detail-stats strong {
+  font-size: 14px;
+  color: #183c2d;
+}
+
+.cw-card-box {
+  border: 1px solid #e2ece6;
+  border-radius: 14px;
+  padding: 16px;
+  background: #fff;
+  margin-top: 8px;
+}
+
+.cw-card-box h3 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #183c2d;
+}
+
+.cw-input-group {
+  margin-bottom: 12px;
+}
+
+.cw-input-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #365747;
+  margin-bottom: 6px;
+}
+
+.cw-input-group input,
+.cw-input-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dce6e0;
+  border-radius: 10px;
+  background: #f8fbf9;
+  color: #183c2d;
+  font-size: 13px;
+}
+
+.cw-receive-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid #edf2ee;
+}
+
+.cw-copy-btn {
+  padding: 7px 12px;
+  background: #eaf8ef;
+  color: #168451;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+#cw-dashboard-message {
+  font-size: 12px;
+  color: #168451;
+  font-weight: 700;
+  margin-top: 10px;
+  text-align: center;
+}
+</style>
+</head>
+<body>
+<main class="dashboard">
+<section id="customer-wallet" class="panel customer-wallet">
+  <!-- Auth View -->
+  <div id="cw-auth" hidden>
+    <h2>Wallet01-PFV</h2>
+    <h3>Create Your Wallet / Sign In</h3>
+    <div class="cw-auth-tabs">
+      <button type="button" class="active" data-cw-mode="login">Login</button>
+      <button type="button" data-cw-mode="register">Register</button>
+    </div>
+
+    <form id="cw-login-form" class="cw-form">
+      <label>Email Address</label>
+      <input id="cw-login-email" type="email" autocomplete="username" required placeholder="Enter your email" value="user@dimex.site">
+      <label>8-digit Password</label>
+      <div class="cw-pin-boxes" data-cw-boxes="login">
+        <input inputmode="numeric" maxlength="1" type="password" value="1">
+        <input inputmode="numeric" maxlength="1" type="password" value="2">
+        <input inputmode="numeric" maxlength="1" type="password" value="3">
+        <input inputmode="numeric" maxlength="1" type="password" value="4">
+        <input inputmode="numeric" maxlength="1" type="password" value="5">
+        <input inputmode="numeric" maxlength="1" type="password" value="6">
+        <input inputmode="numeric" maxlength="1" type="password" value="7">
+        <input inputmode="numeric" maxlength="1" type="password" value="8">
+      </div>
+      <label class="cw-remember"><input id="cw-remember" type="checkbox" checked> Remember this device</label>
+      <button type="submit" class="cw-primary">Login to My Wallet</button>
+      <button type="button" id="cw-forgot-open" class="cw-link">Forgot Password?</button>
+    </form>
+
+    <form id="cw-register-form" class="cw-form" hidden>
+      <label>Full Name</label>
+      <input id="cw-fullname" maxlength="150" required placeholder="Your full name">
+      <label>Mobile Number</label>
+      <div class="cw-mobile-row">
+        <input id="cw-country-code" type="tel" maxlength="8" required placeholder="+91">
+        <input id="cw-mobile" type="tel" maxlength="24" required placeholder="Mobile number">
+      </div>
+      <label>Country</label>
+      <input id="cw-country" required placeholder="Your country">
+      <label>Email Address</label>
+      <input id="cw-register-email" type="email" required placeholder="Your email">
+      <label>8-digit Numeric Password</label>
+      <div class="cw-pin-boxes" data-cw-boxes="register">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+        <input inputmode="numeric" maxlength="1" type="password">
+      </div>
+      <button type="submit" class="cw-primary">Create Wallet</button>
+    </form>
+
+    <form id="cw-reset-form" class="cw-form" hidden>
+      <h3>Reset Password</h3>
+      <input id="cw-reset-email" type="email" required placeholder="Registered email">
+      <button type="button" id="cw-reset-request" class="cw-primary">Send Email OTP</button>
+      <input id="cw-reset-otp" inputmode="numeric" maxlength="6" placeholder="6-digit OTP">
+      <input id="cw-reset-new" type="password" inputmode="numeric" maxlength="8" placeholder="New 8-digit password">
+      <button type="submit" class="cw-primary">Reset Password</button>
+      <button type="button" id="cw-reset-back" class="cw-link">← Back to Login</button>
+    </form>
+    <p id="cw-auth-message" role="status"></p>
+  </div>
+
+  <!-- Main Wallet Dashboard View (Open by default so you can click & test immediately) -->
+  <div id="cw-dashboard" class="cw-premium-dashboard cw-nav-home">
+    <div class="cw-dashboard-head">
+      <div class="cw-wallet-heading">
+        <button type="button" id="cw-settings-btn" class="cw-icon-btn" aria-label="Settings">⚙</button>
+        <button type="button" id="cw-notif-btn" class="cw-icon-btn" aria-label="Notifications">🔔</button>
+        <button type="button" id="cw-wallet-switcher" class="cw-wallet-switcher">
+          <span id="cw-active-wallet-label">Wallet01-PFV</span> <span>⌄</span>
+        </button>
+      </div>
+      <div class="cw-head-right">
+        <button type="button" id="cw-scan-btn" class="cw-icon-btn" aria-label="Scan QR">⛶</button>
+        <button type="button" id="cw-view-assets" class="cw-view-assets-btn">View Assets</button>
+        <button type="button" id="cw-logout" class="cw-logout-btn">⇥ Logout</button>
+      </div>
+    </div>
+
+    <!-- Home Sub-tabs -->
+    <div class="cw-home-subtabs" role="tablist">
+      <button type="button" class="cw-subtab active" data-cw-home-tab="coin">Coin</button>
+      <button type="button" class="cw-subtab" data-cw-home-tab="earn">Earn</button>
+      <button type="button" class="cw-subtab" data-cw-home-tab="nft">NFT</button>
+    </div>
+
+    <!-- Home Balance -->
+    <div class="cw-home-balance">
+      <div class="cw-balance-row">
+        <span class="cw-balance-label">Total Balance</span>
+        <button type="button" id="cw-toggle-balance-eye" class="cw-eye-btn">👁</button>
+      </div>
+      <strong id="cw-home-balance-value">₹447.21</strong>
+      <span id="cw-home-btc-equiv" class="cw-btc-equiv">≈ 0.00007998 BTC</span>
+      <small id="cw-home-today-pnl" class="cw-today-pnl">Today <span class="neg">₹-1.03 ▼ -0.24%</span></small>
+    </div>
+
+    <!-- Send / Receive / Swap -->
+    <div class="cw-actions">
+      <button type="button" data-cw-action="send" class="cw-action-send">
+        <span class="cw-action-icon">↑</span>Send
+      </button>
+      <button type="button" data-cw-action="receive" class="cw-action-receive">
+        <span class="cw-action-icon">↓</span>Receive
+      </button>
+      <button type="button" data-cw-action="swap" class="cw-action-swap">
+        <span class="cw-action-icon">⇄</span>Swap
+      </button>
+    </div>
+
+    <!-- Home Search -->
+    <div class="cw-home-search">
+      <label class="cw-search-field" for="cw-home-search">
+        <span>⌕</span>
+        <input id="cw-home-search" type="search" placeholder="Search assets..." autocomplete="off">
+      </label>
+      <button type="button" class="cw-filter-button" id="cw-home-filter">All ⌄</button>
+      <button type="button" class="cw-menu-dots-btn" id="cw-home-more">⋮</button>
+    </div>
+
+    <!-- Market Screen Top Header -->
+    <div class="cw-market-screen" hidden>
+      <div class="cw-market-tabs">
+        <button type="button" class="active" data-cw-mkt-tab="watchlist">Watchlist</button>
+        <button type="button" data-cw-mkt-tab="crypto">Crypto</button>
+        <button type="button" data-cw-mkt-tab="stocks">Stocks</button>
+      </div>
+      <div class="cw-market-stats-grid">
+        <div class="cw-stat-box"><span>Total Market Cap</span><strong>$2.54T</strong><small class="pos">+1.82%</small></div>
+        <div class="cw-stat-box"><span>24h Volume</span><strong>$98.47B</strong><small class="pos">+6.21%</small></div>
+        <div class="cw-stat-box"><span>BTC Dominance</span><strong>52.3%</strong><small class="neg">-0.34%</small></div>
+      </div>
+      <div class="cw-market-pills">
+        <button type="button" class="active" data-cw-mkt-filter="top">Top</button>
+        <button type="button" data-cw-mkt-filter="gainers">Gainers</button>
+        <button type="button" data-cw-mkt-filter="losers">Losers</button>
+        <button type="button" data-cw-mkt-filter="trending">Trending</button>
+      </div>
+      <div class="cw-market-col-head">
+        <span># &nbsp; Asset</span>
+        <span>Price (USD)</span>
+        <span>24h Change</span>
+      </div>
+    </div>
+
+    <!-- Explore Screen Content -->
+    <div class="cw-explore-tools" hidden>
+      <h3 class="cw-screen-center-title">Explore</h3>
+      <label class="cw-search-field cw-explore-search-bar" for="cw-explore-search">
+        <span class="cw-google-g">G</span>
+        <input id="cw-explore-search" type="search" placeholder="Search crypto, stocks, news, DeFi..." autocomplete="off">
+        <span>🎙</span>
+      </label>
+
+      <div class="cw-popular-searches">
+        <h4>Popular Searches</h4>
+        <div class="cw-chip-row">
+          <button type="button" class="cw-chip" data-cw-quick-search="BTC">📈 BTC</button>
+          <button type="button" class="cw-chip" data-cw-quick-search="ETH">◈ ETH</button>
+          <button type="button" class="cw-chip" data-cw-quick-search="BNB">❖ BNB</button>
+          <button type="button" class="cw-chip" data-cw-quick-search="USDT">₮ USDT</button>
+          <button type="button" class="cw-chip" data-cw-quick-search="DMXC">⌕ DMXC</button>
+        </div>
+      </div>
+
+      <div class="cw-explore-categories">
+        <h4>Explore Categories</h4>
+        <div class="cw-cat-grid">
+          <button type="button" class="cw-cat-card" data-cw-cat="crypto"><span>🪙</span><small>Crypto</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="stocks"><span>📊</span><small>Stocks</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="news"><span>📰</span><small>News</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="defi"><span>💠</span><small>DeFi</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="nft"><span>🖼</span><small>NFT</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="markets"><span>🌐</span><small>Markets</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="analytics"><span>📈</span><small>Analytics</small></button>
+          <button type="button" class="cw-cat-card" data-cw-cat="learn"><span>🎓</span><small>Learn</small></button>
+        </div>
+      </div>
+
+      <div class="cw-trending-header">
+        <h4>Trending Now</h4>
+        <button type="button" id="cw-trending-view-all" class="cw-link-inline">View All &rsaquo;</button>
+      </div>
+    </div>
+
+    <!-- Trade Screen Content -->
+    <div class="cw-trade-tools" hidden>
+      <h3 class="cw-screen-center-title">Trade</h3>
+      <div class="cw-trade-mode-tabs">
+        <button type="button" class="active" data-cw-trade-tab="spot">Spot</button>
+        <button type="button" data-cw-trade-tab="perpetuals">Perpetuals</button>
+        <button type="button" data-cw-trade-tab="convert">Convert</button>
+      </div>
+      <div class="cw-trade-pair-bar">
+        <div class="cw-pair-left">
+          <span class="cw-btc-badge">₿</span>
+          <div>
+            <strong id="cw-trade-pair-title">BTC/USDT ⌄</strong>
+            <div class="cw-pair-price-line">
+              <span id="cw-trade-pair-price">69,487.21</span>
+              <small>≈ $69,487.21</small>
+              <span class="pos">+1.28%</span>
+            </div>
+          </div>
+        </div>
+        <div class="cw-pair-stats">
+          <div><span>24h High</span><strong>70,420.00</strong></div>
+          <div><span>24h Low</span><strong>68,201.50</strong></div>
+          <div><span>24h Vol (BTC)</span><strong>15,320.84</strong></div>
+          <div><span>24h Vol (USDT)</span><strong>1.06B</strong></div>
+        </div>
+      </div>
+      <div class="cw-tf-row">
+        <button type="button">1m</button>
+        <button type="button">5m</button>
+        <button type="button">15m</button>
+        <button type="button">1H</button>
+        <button type="button">4H</button>
+        <button type="button" class="active">1D</button>
+        <button type="button">1W</button>
+      </div>
+      <div class="cw-trade-chart-card">
+        <svg viewBox="0 0 600 180" class="cw-spot-sparkline">
+          <defs>
+            <linearGradient id="spotGreenGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00c076" stop-opacity="0.35"/>
+              <stop offset="100%" stop-color="#00c076" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <path d="M10,145 L45,120 L70,132 L105,96 L135,108 L175,85 L210,104 L250,74 L290,90 L335,62 L370,76 L415,48 L455,66 L500,32 L530,52 L555,44 L570,58" fill="none" stroke="#00c076" stroke-width="2.5"/>
+          <path d="M10,145 L45,120 L70,132 L105,96 L135,108 L175,85 L210,104 L250,74 L290,90 L335,62 L370,76 L415,48 L455,66 L500,32 L530,52 L555,44 L570,58 L570,170 L10,170 Z" fill="url(#spotGreenGrad)"/>
+          <circle cx="570" cy="58" r="5" fill="#00c076" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+        <div class="cw-y-axis-labels">
+          <span>72,000.00</span>
+          <span>70,000.00</span>
+          <span class="cw-y-badge">69,487.21</span>
+          <span>68,000.00</span>
+          <span>66,000.00</span>
+          <span>64,000.00</span>
+        </div>
+        <div class="cw-x-axis-labels">
+          <span>Nov 14</span><span>Nov 15</span><span>Nov 16</span><span>Nov 17</span><span>Nov 18</span><span>Nov 19</span><span>Nov 20</span>
+        </div>
+      </div>
+
+      <div class="cw-order-ticket-grid">
+        <div class="cw-order-form-col">
+          <div class="cw-buy-sell-switch">
+            <button type="button" class="cw-btn-buy active" id="cw-side-buy">Buy</button>
+            <button type="button" class="cw-btn-sell" id="cw-side-sell">Sell</button>
+          </div>
+          <div class="cw-limit-select"><span>Limit</span><span>⌄</span><span>ⓘ</span></div>
+          <div class="cw-num-box">
+            <small>Price (USDT)</small>
+            <div class="cw-num-controls">
+              <button type="button" id="cw-price-minus">−</button>
+              <input id="cw-trade-price" type="text" value="69487.21">
+              <button type="button" id="cw-price-plus">+</button>
+            </div>
+          </div>
+          <div class="cw-num-box">
+            <div class="cw-num-controls">
+              <button type="button" id="cw-amt-minus">−</button>
+              <input id="cw-trade-amount" type="number" step="0.01" placeholder="Amount (BTC)">
+              <button type="button" id="cw-amt-plus">+</button>
+            </div>
+          </div>
+          <div class="cw-total-box">
+            <input id="cw-trade-total" type="text" placeholder="Total (USDT)" readonly>
+          </div>
+          <div class="cw-avail-line">
+            <span>Available</span>
+            <strong>2,500.00 USDT</strong>
+          </div>
+          <button type="button" id="cw-submit-order" class="cw-buy-cta">Buy BTC</button>
+        </div>
+
+        <div class="cw-orderbook-col">
+          <div class="cw-ob-head"><span>Price (USDT)</span><span>Amount</span></div>
+          <div class="cw-ob-asks">
+            <div class="cw-ob-row ask"><span>69,492.10</span><span>0.1452</span></div>
+            <div class="cw-ob-row ask"><span>69,491.68</span><span>0.0284</span></div>
+            <div class="cw-ob-row ask"><span>69,490.57</span><span>0.1631</span></div>
+          </div>
+          <div class="cw-ob-mid"><strong class="pos">69,487.21</strong><small class="pos">+1.28%</small></div>
+          <div class="cw-ob-bids">
+            <div class="cw-ob-row bid"><span>69,486.90</span><span>0.2018</span></div>
+            <div class="cw-ob-row bid"><span>69,485.72</span><span>0.3176</span></div>
+            <div class="cw-ob-row bid"><span>69,484.55</span><span>0.0892</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cw-orders-bottom-tabs">
+        <button type="button" class="active">Open Orders (0)</button>
+        <button type="button">Order History</button>
+        <button type="button">Trade History</button>
+      </div>
+    </div>
+
+    <!-- Dynamic Asset List Container -->
+    <div id="cw-asset-list" class="cw-assets-list"></div>
+
+    <!-- Coin Detail View -->
+    <div id="cw-coin-detail" hidden></div>
+
+    <!-- Action Panel (Send / Receive / Swap / Notifications / Settings) -->
+    <div id="cw-action-panel" hidden></div>
+
+    <p id="cw-dashboard-message" role="status"></p>
+
+    <!-- Bottom Navigation -->
+    <nav class="cw-bottom-nav" aria-label="Wallet navigation">
+      <button type="button" data-cw-nav="home" class="active"><span>⌂</span><small>Home</small></button>
+      <button type="button" data-cw-nav="market"><span>▥</span><small>Market</small></button>
+      <button type="button" data-cw-nav="explore"><span>⌕</span><small>Explore</small></button>
+      <button type="button" data-cw-nav="trade"><span>⇄</span><small>Trade</small></button>
+    </nav>
+  </div>
+</section>
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // Sample Asset Data for Immediate Interactive Testing
+  const assetsData = [
+    { symbol: "DMXC", name: "DimeX Chain", type: "crypto", balance: "1,250.00", priceUsd: 0.042, inrValue: "₹350.00", change: "+4.85%", positive: true, cap: "$42.0M", vol: "$1.85M", network: "DimeX Mainnet (Chain ID: 1723)", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" },
+    { symbol: "DMX", name: "DimeX Coin (BEP-20)", type: "crypto", balance: "840.50", priceUsd: 0.011, inrValue: "₹77.21", change: "+2.14%", positive: true, cap: "$11.0M", vol: "$420.5K", network: "BNB Smart Chain (BEP-20)", address: "0x0eb5dc6af3dbd9f6d10f50c363b61c8714f497e6" },
+    { symbol: "BTC", name: "Bitcoin", type: "crypto", balance: "0.000080", priceUsd: 69487.21, inrValue: "₹20.00", change: "+1.28%", positive: true, cap: "$1.36T", vol: "$34.2B", network: "Bitcoin Network", address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh" },
+    { symbol: "ETH", name: "Ethereum", type: "crypto", balance: "0.00", priceUsd: 2640.50, inrValue: "₹0.00", change: "-0.84%", positive: false, cap: "$318.0B", vol: "$14.8B", network: "Ethereum ERC-20", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" },
+    { symbol: "BNB", name: "BNB", type: "crypto", balance: "0.00", priceUsd: 612.40, inrValue: "₹0.00", change: "+0.92%", positive: true, cap: "$89.4B", vol: "$1.9B", network: "BNB Smart Chain", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" },
+    { symbol: "USDT", name: "Tether USD", type: "crypto", balance: "0.00", priceUsd: 1.00, inrValue: "₹0.00", change: "+0.01%", positive: true, cap: "$120.5B", vol: "$52.1B", network: "BEP-20 / ERC-20", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" },
+    { symbol: "PAXG", name: "PAX Gold", type: "stocks", balance: "0.00", priceUsd: 2685.00, inrValue: "₹0.00", change: "+0.65%", positive: true, cap: "$530.0M", vol: "$28.4M", network: "ERC-20 Commodity", address: "0x71C95911E9a5D330f4D621842EC243EE1343292e" }
+  ];
+
+  const authBox = document.getElementById("cw-auth");
+  const dashboard = document.getElementById("cw-dashboard");
+  const assetList = document.getElementById("cw-asset-list");
+  const detailBox = document.getElementById("cw-coin-detail");
+  const actionPanel = document.getElementById("cw-action-panel");
+  const msgEl = document.getElementById("cw-dashboard-message");
+
+  let currentNav = "home";
+  let currentHomeTab = "coin";
+  let balanceHidden = false;
+
+  function showToast(text) {
+    msgEl.textContent = text;
+    setTimeout(() => {
+      if (msgEl.textContent === text) msgEl.textContent = "";
+    }, 3000);
+  }
+
+  // Render Asset List
+  function renderAssets(filterText = "", category = "all") {
+    if (currentNav === "home" && currentHomeTab === "earn") {
+      assetList.innerHTML = `
+        <div class="cw-card-box">
+          <h3>DimeX Staking & Earn</h3>
+          <p style="color:#71877a;font-size:12px;margin-bottom:12px;">Earn daily DMX rewards with flexible & locked plans.</p>
+          <div class="cw-receive-row">
+            <div><strong>90 Days Plan</strong><br><small style="color:#168451;">12% APY · DMX Staking</small></div>
+            <button type="button" class="cw-copy-btn" onclick="alert('90-Day Staking Selected!')">Stake Now</button>
+          </div>
+          <div class="cw-receive-row">
+            <div><strong>180 Days Plan</strong><br><small style="color:#168451;">18% APY · DMX Staking</small></div>
+            <button type="button" class="cw-copy-btn" onclick="alert('180-Day Staking Selected!')">Stake Now</button>
+          </div>
+          <div class="cw-receive-row" style="border:0;">
+            <div><strong>365 Days Plan</strong><br><small style="color:#168451;">24% APY · DMX Staking</small></div>
+            <button type="button" class="cw-copy-btn" onclick="alert('365-Day Staking Selected!')">Stake Now</button>
+          </div>
+        </div>`;
+      return;
+    }
+
+    if (currentNav === "home" && currentHomeTab === "nft") {
+      assetList.innerHTML = `
+        <div class="cw-card-box" style="text-align:center;padding:28px 16px;">
+          <div style="font-size:32px;margin-bottom:8px;">🖼</div>
+          <strong>No NFTs Found</strong>
+          <p style="color:#71877a;font-size:12px;margin-top:4px;">Your DimeX Chain (DMXC) collectibles will appear here.</p>
+        </div>`;
+      return;
+    }
+
+    const q = filterText.trim().toLowerCase();
+    const filtered = assetsData.filter(a => {
+      const matchQuery = !q || a.symbol.toLowerCase().includes(q) || a.name.toLowerCase().includes(q);
+      const matchCat = category === "all" || category === "watchlist" || a.type === category;
+      return matchQuery && matchCat;
+    });
+
+    if (!filtered.length) {
+      assetList.innerHTML = `<div style="padding:24px;text-align:center;color:#71877a;">No matching assets found.</div>`;
+      return;
+    }
+
+    assetList.innerHTML = filtered.map(a => `
+      <div class="cw-market-asset-row" data-symbol="${a.symbol}">
+        <div class="cw-market-asset-logo">${a.symbol.slice(0, 4)}</div>
+        <div class="cw-market-asset-name">
+          <strong>${a.name}</strong>
+          <small>${currentNav === "home" ? `${a.balance} ${a.symbol}` : `$${a.priceUsd.toLocaleString()}`}</small>
+        </div>
+        <div class="cw-market-asset-price">
+          <strong>${currentNav === "home" ? (balanceHidden ? "••••" : a.inrValue) : `$${a.priceUsd.toLocaleString()}`}</strong>
+          <small class="${a.positive ? "pos" : "neg"}">${a.change}</small>
+        </div>
+      </div>
+    `).join("");
+
+    // Bind click to open Coin Detail Page
+    assetList.querySelectorAll(".cw-market-asset-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const sym = row.getAttribute("data-symbol");
+        const coin = assetsData.find(x => x.symbol === sym);
+        if (coin) openCoinDetail(coin);
+      });
+    });
+  }
+
+  // Open Full-Screen Coin Detail
+  function openCoinDetail(coin) {
+    dashboard.classList.add("cw-overlay-mode");
+    actionPanel.hidden = true;
+    detailBox.hidden = false;
+    detailBox.innerHTML = `
+      <button type="button" class="cw-page-back" id="cw-close-detail">← Back to Wallet</button>
+      <div class="cw-detail-heading">
+        <div class="cw-detail-logo-fallback">${coin.symbol}</div>
+        <div>
+          <strong style="font-size:18px;display:block;">${coin.name} (${coin.symbol})</strong>
+          <small style="color:#71877a;">${coin.network}</small>
+        </div>
+      </div>
+      <div class="cw-detail-price">$${coin.priceUsd.toLocaleString()}</div>
+      <div class="${coin.positive ? "pos" : "neg"}" style="font-weight:700;margin-bottom:14px;">${coin.change} (24h)</div>
+
+      <div class="cw-actions">
+        <button type="button" class="cw-action-send" id="dt-send"><span class="cw-action-icon">↑</span>Send</button>
+        <button type="button" class="cw-action-receive" id="dt-receive"><span class="cw-action-icon">↓</span>Receive</button>
+        <button type="button" class="cw-action-swap" id="dt-swap"><span class="cw-action-icon">⇄</span>Swap</button>
+      </div>
+
+      <div class="cw-detail-stats">
+        <div><span>Your Balance</span><strong>${coin.balance} ${coin.symbol}</strong></div>
+        <div><span>INR Value</span><strong>${coin.inrValue}</strong></div>
+        <div><span>Market Cap</span><strong>${coin.cap}</strong></div>
+        <div><span>24h Volume</span><strong>${coin.vol}</strong></div>
+      </div>
+    `;
+
+    document.getElementById("cw-close-detail").onclick = closeOverlay;
+    document.getElementById("dt-send").onclick = () => openActionView("send", coin.symbol);
+    document.getElementById("dt-receive").onclick = () => openActionView("receive", coin.symbol);
+    document.getElementById("dt-swap").onclick = () => openActionView("swap", coin.symbol);
+  }
+
+  // Open Full-Screen Send / Receive / Swap
+  function openActionView(mode, defaultSymbol = "DMXC") {
+    dashboard.classList.add("cw-overlay-mode");
+    detailBox.hidden = true;
+    actionPanel.hidden = false;
+
+    if (mode === "send") {
+      actionPanel.innerHTML = `
+        <button type="button" class="cw-page-back" id="cw-close-action">← Back</button>
+        <div class="cw-card-box">
+          <h3>Send Crypto</h3>
+          <div class="cw-input-group">
+            <label>Select Asset</label>
+            <select id="send-asset">
+              ${assetsData.map(a => `<option value="${a.symbol}" ${a.symbol === defaultSymbol ? "selected" : ""}>${a.name} (${a.symbol}) - Bal: ${a.balance}</option>`).join("")}
+            </select>
+          </div>
+          <div class="cw-input-group">
+            <label>Recipient Address</label>
+            <input type="text" id="send-to" placeholder="0x... Wallet Address">
+          </div>
+          <div class="cw-input-group">
+            <label>Amount</label>
+            <input type="number" id="send-amt" placeholder="0.00">
+          </div>
+          <button type="button" class="cw-primary" id="confirm-send">Confirm & Send</button>
+        </div>
+      `;
+      document.getElementById("confirm-send").onclick = () => {
+        const to = document.getElementById("send-to").value.trim();
+        const amt = document.getElementById("send-amt").value.trim();
+        if (!to || !amt) return showToast("Please enter recipient address and amount.");
+        closeOverlay();
+        showToast(`Transaction submitted: ${amt} ${document.getElementById("send-asset").value} sent!`);
+      };
+    } else if (mode === "receive") {
+      actionPanel.innerHTML = `
+        <button type="button" class="cw-page-back" id="cw-close-action">← Back</button>
+        <div class="cw-card-box">
+          <h3>Receive Crypto</h3>
+          <p style="font-size:12px;color:#71877a;margin-bottom:10px;">Tap Copy to copy your wallet deposit address:</p>
+          ${assetsData.slice(0, 5).map(a => `
+            <div class="cw-receive-row">
+              <div style="min-width:0;flex:1;">
+                <strong>${a.name} (${a.symbol})</strong>
+                <div style="font-size:11px;color:#71877a;overflow:hidden;text-overflow:ellipsis;">${a.address}</div>
+              </div>
+              <button type="button" class="cw-copy-btn" data-addr="${a.address}">Copy</button>
+            </div>
+          `).join("")}
+        </div>
+      `;
+      actionPanel.querySelectorAll(".cw-copy-btn").forEach(btn => {
+        btn.onclick = () => {
+          navigator.clipboard?.writeText(btn.getAttribute("data-addr"));
+          btn.textContent = "Copied ✓";
+          showToast("Address copied to clipboard!");
+        };
+      });
+    } else if (mode === "swap") {
+      actionPanel.innerHTML = `
+        <button type="button" class="cw-page-back" id="cw-close-action">← Back</button>
+        <div class="cw-card-box">
+          <h3>Instant Swap</h3>
+          <div class="cw-input-group">
+            <label>From</label>
+            <select id="swap-from">
+              ${assetsData.map(a => `<option value="${a.symbol}" ${a.symbol === defaultSymbol ? "selected" : ""}>${a.symbol} (${a.name})</option>`).join("")}
+            </select>
+          </div>
+          <div class="cw-input-group">
+            <label>Amount to Swap</label>
+            <input type="number" id="swap-amt" placeholder="0.00">
+          </div>
+          <div class="cw-input-group">
+            <label>To</label>
+            <select id="swap-to">
+              <option value="USDT">USDT (Tether USD)</option>
+              <option value="DMXC">DMXC (DimeX Chain)</option>
+              <option value="BNB">BNB</option>
+            </select>
+          </div>
+          <button type="button" class="cw-primary" id="confirm-swap">Swap Now</button>
+        </div>
+      `;
+      document.getElementById("confirm-swap").onclick = () => {
+        const amt = document.getElementById("swap-amt").value.trim();
+        if (!amt) return showToast("Enter amount to swap.");
+        closeOverlay();
+        showToast(`Swapped ${amt} ${document.getElementById("swap-from").value} → ${document.getElementById("swap-to").value}`);
+      };
+    }
+
+    document.getElementById("cw-close-action").onclick = closeOverlay;
+  }
+
+  function closeOverlay() {
+    dashboard.classList.remove("cw-overlay-mode");
+    detailBox.hidden = true;
+    actionPanel.hidden = true;
+  }
+
+  // Bottom Nav Switching
+  document.querySelectorAll(".cw-bottom-nav button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      closeOverlay();
+      document.querySelectorAll(".cw-bottom-nav button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentNav = btn.getAttribute("data-cw-nav");
+      dashboard.classList.remove("cw-nav-home", "cw-nav-market", "cw-nav-explore", "cw-nav-trade");
+      dashboard.classList.add(`cw-nav-${currentNav}`);
+      renderAssets();
+    });
+  });
+
+  // Home Sub-tabs (Coin / Earn / NFT)
+  document.querySelectorAll(".cw-subtab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".cw-subtab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      currentHomeTab = tab.getAttribute("data-cw-home-tab");
+      renderAssets();
+    });
+  });
+
+  // Market Sub-tabs & Pills
+  document.querySelectorAll("[data-cw-mkt-tab]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-cw-mkt-tab]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderAssets("", btn.getAttribute("data-cw-mkt-tab"));
+    });
+  });
+
+  document.querySelectorAll("[data-cw-mkt-filter]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-cw-mkt-filter]").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderAssets();
+    });
+  });
+
+  // Send / Receive / Swap buttons on Home
+  document.querySelectorAll("[data-cw-action]").forEach(btn => {
+    btn.addEventListener("click", () => openActionView(btn.getAttribute("data-cw-action")));
+  });
+
+  // View Assets button -> switches to Market tab
+  document.getElementById("cw-view-assets").addEventListener("click", () => {
+    document.querySelector('.cw-bottom-nav button[data-cw-nav="market"]').click();
+  });
+
+  // Eye Toggle Balance
+  document.getElementById("cw-toggle-balance-eye").addEventListener("click", () => {
+    balanceHidden = !balanceHidden;
+    document.getElementById("cw-home-balance-value").textContent = balanceHidden ? "₹••••••" : "₹447.21";
+    renderAssets();
+  });
+
+  // Search Inputs (Home & Explore)
+  document.getElementById("cw-home-search").addEventListener("input", e => renderAssets(e.target.value));
+  document.getElementById("cw-explore-search").addEventListener("input", e => renderAssets(e.target.value));
+  document.querySelectorAll("[data-cw-quick-search]").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const term = chip.getAttribute("data-cw-quick-search");
+      document.getElementById("cw-explore-search").value = term;
+      renderAssets(term);
+    });
+  });
+
+  // Trade Buy/Sell & Total Calculation
+  const sideBuy = document.getElementById("cw-side-buy");
+  const sideSell = document.getElementById("cw-side-sell");
+  const submitOrder = document.getElementById("cw-submit-order");
+  const tradePrice = document.getElementById("cw-trade-price");
+  const tradeAmount = document.getElementById("cw-trade-amount");
+  const tradeTotal = document.getElementById("cw-trade-total");
+
+  function updateTradeTotal() {
+    const p = parseFloat(tradePrice.value) || 0;
+    const a = parseFloat(tradeAmount.value) || 0;
+    tradeTotal.value = a > 0 ? (p * a).toFixed(2) + " USDT" : "";
+  }
+  tradeAmount.addEventListener("input", updateTradeTotal);
+  tradePrice.addEventListener("input", updateTradeTotal);
+
+  sideBuy.addEventListener("click", () => {
+    sideBuy.classList.add("active");
+    sideSell.classList.remove("active");
+    submitOrder.textContent = "Buy BTC";
+    submitOrder.style.background = "#00c076";
+  });
+
+  sideSell.addEventListener("click", () => {
+    sideSell.classList.add("active");
+    sideBuy.classList.remove("active");
+    submitOrder.textContent = "Sell BTC";
+    submitOrder.style.background = "#f6465d";
+  });
+
+  submitOrder.addEventListener("click", () => {
+    if (!tradeAmount.value) return showToast("Please enter BTC amount.");
+    showToast(`${submitOrder.textContent} order placed for ${tradeAmount.value} BTC!`);
+    tradeAmount.value = "";
+    tradeTotal.value = "";
+  });
+
+  // Logout & Login Auth Flow
+  document.getElementById("cw-logout").addEventListener("click", () => {
+    dashboard.hidden = true;
+    authBox.hidden = false;
+  });
+
+  document.querySelectorAll("[data-cw-mode]").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll("[data-cw-mode]").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const isLogin = tab.getAttribute("data-cw-mode") === "login";
+      document.getElementById("cw-login-form").hidden = !isLogin;
+      document.getElementById("cw-register-form").hidden = isLogin;
+      document.getElementById("cw-reset-form").hidden = true;
+    });
+  });
+
+  document.getElementById("cw-forgot-open").addEventListener("click", () => {
+    document.getElementById("cw-login-form").hidden = true;
+    document.getElementById("cw-register-form").hidden = true;
+    document.getElementById("cw-reset-form").hidden = false;
+  });
+
+  document.getElementById("cw-reset-back").addEventListener("click", () => {
+    document.getElementById("cw-reset-form").hidden = true;
+    document.getElementById("cw-login-form").hidden = false;
+  });
+
+  document.getElementById("cw-login-form").addEventListener("submit", e => {
+    e.preventDefault();
+    authBox.hidden = true;
+    dashboard.hidden = false;
+    renderAssets();
+  });
+
+  document.getElementById("cw-register-form").addEventListener("submit", e => {
+    e.preventDefault();
+    authBox.hidden = true;
+    dashboard.hidden = false;
+    showToast("Wallet created successfully!");
+    renderAssets();
+  });
+
+  // Initial Render
+  renderAssets();
+});
+</script>
+</body>
+</html>
